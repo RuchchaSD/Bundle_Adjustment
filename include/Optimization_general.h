@@ -55,6 +55,7 @@ private:
     void computeError(const Eigen::VectorXd& estimatedParameters1, const Eigen::VectorXd& estimatedParameters2, const Eigen::VectorXd& Measurements, Eigen::VectorXd& errorVec);
     void buildJacobian();//take pose_vertices and landmark_vertices and build the jacobian
     void buildErrorVector();//take pose_vertices and landmark_vertices and build the error vector
+    void buildErrorVecndJacobian();//take pose_vertices and landmark_vertices and build the error vector and jacobian
     void buildCovarianceMatrix();//make the covariance matrix from w_sigma in the edges
     void updateEstimates(Eigen::VectorXd& deltaX);//update the pose and landmark vertices with the new estimates
     void RobustKernel(Eigen::VectorXd& estimateVec, Eigen::VectorXd& measurementVec, Eigen::VectorXd& Error);

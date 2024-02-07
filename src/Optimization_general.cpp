@@ -51,6 +51,93 @@ void Optimization_General::computeJacobianVertex(const Eigen::VectorXd& paramete
     }
 }
 
+
+void Optimization_General::buildCovarianceMatrix() {
+    Eigen::MatrixXd* Cov = new Eigen::MatrixXd();
+
+    //structure of the covariance matrix -> rows & cols - number of measurements(observations in a measurement) * measurement count
+    Cov->resize(this->edge_size * this->general_edge_count, this->edge_size * this->general_edge_count);
+    Cov->setZero();
+
+    Eigen::MatrixXd Cov_edge;
+    Cov_edge.resize(this->edge_size, this->edge_size);
+
+    double sigma_squared;
+    int location;
+
+    for (auto edge_ptr : this->general_edges) {
+
+        sigma_squared = edge_ptr->getCovariance();
+        location = edge_ptr->getId() * this->edge_size;
+
+        Cov_edge.setIdentity();
+        Cov_edge *= sigma_squared;
+        //std::cout << "Location: " << location << "\n";
+        //std::cout << "Cov_edge: " << Cov_edge << "\n";
+
+        Cov->block(location, location, edge_size, edge_size) = Cov_edge;
+    }
+    delete this->Cov;
+    this->Cov = Cov;
+    //std::cout << "Covariance matrix built" << std::endl;
+    //std::cout << *Cov << std::endl;
+}
+
+void Optimization_General::updateEstimates(Eigen::VectorXd& deltaX) {
+    //update the pose and landmark vertices with the new estimates
+//    for(auto vertex_ptr : this->general_vertices){
+//         vertex_ptr->updateParameters(deltaX.segment(vertex_ptr->getId() * this->vertex_size, this->vertex_size));
+//     }
+
+    int location = 0;
+    int l = 0;
+    int size = 0;
+
+    for (int i = 0; i < this->general_vertices.size(); i++) {
+        for (int k = 0; k < i; k++)
+            location += this->vertex_sizes[k] * this->vertex_sizes[k];
+        size = this->vertex_sizes[i];
+
+        for (int j = 0; j < this->general_vertices[i].size(); j++) {
+            l = location + j * size;
+            this->general_vertices[i][j]->updateParameters(deltaX.segment(l, size));
+        }
+    }
+}
+
+void Optimization_General::buildErrorVector() {
+    Eigen::VectorXd* eVec = new Eigen::VectorXd();
+    //structure of the error vector -> rows - number of measurements(observations in a measurement) * measurement count, cols - 1
+    eVec->resize(this->edge_size * this->general_edge_count);
+
+    Eigen::VectorXd errorVec_edge;
+    errorVec_edge.resize(this->edge_size);
+
+    //double w_sigma;
+
+    auto processEdge = [&](general_edge* edge_ptr) {
+        general_vertex* first_vertex_ptr = edge_ptr->getFirstVertex();
+        general_vertex* second_vertex_ptr = edge_ptr->getSecondVertex();
+
+        Eigen::VectorXd estimatedParameters1 = first_vertex_ptr->getParameters();
+        Eigen::VectorXd estimatedParameters2 = second_vertex_ptr->getParameters();
+
+        Eigen::VectorXd Measurements = edge_ptr->getMeasurement();
+
+        this->computeError(estimatedParameters1, estimatedParameters2, Measurements, errorVec_edge);
+
+        eVec->segment(edge_ptr->getId() * this->edge_size, this->edge_size) = errorVec_edge;
+        };
+    //calculate the error vector for each edge and add the error to the error vector
+
+    for (auto edge_ptr : this->general_edges) {
+        processEdge(edge_ptr);
+    }
+
+    delete this->errorVec;
+    this->errorVec = eVec;
+}
+
 void Optimization_General::buildJacobian() {
 
     Eigen::MatrixXd* J = new Eigen::MatrixXd();
@@ -135,60 +222,9 @@ void Optimization_General::buildJacobian() {
     //std::cout << "Jacobian matrix: " << *Jacobian << std::endl;
 }
 
-void Optimization_General::buildCovarianceMatrix() {
-    Eigen::MatrixXd* Cov = new Eigen::MatrixXd();
-
-    //structure of the covariance matrix -> rows & cols - number of measurements(observations in a measurement) * measurement count
-    Cov->resize(this->edge_size * this->general_edge_count, this->edge_size * this->general_edge_count);
-    Cov->setZero();
-
-    Eigen::MatrixXd Cov_edge;
-    Cov_edge.resize(this->edge_size, this->edge_size);
-
-    double sigma_squared;
-    int location;
-
-    for (auto edge_ptr : this->general_edges) {
-
-        sigma_squared = edge_ptr->getCovariance();
-        location = edge_ptr->getId() * this->edge_size;
-
-        Cov_edge.setIdentity();
-        Cov_edge *= sigma_squared;
-        //std::cout << "Location: " << location << "\n";
-        //std::cout << "Cov_edge: " << Cov_edge << "\n";
-
-        Cov->block(location, location, edge_size, edge_size) = Cov_edge;
-    }
-    delete this->Cov;
-    this->Cov = Cov;
-    //std::cout << "Covariance matrix built" << std::endl;
-    //std::cout << *Cov << std::endl;
-}
-
-void Optimization_General::updateEstimates(Eigen::VectorXd& deltaX) {
-    //update the pose and landmark vertices with the new estimates
-//    for(auto vertex_ptr : this->general_vertices){
-//         vertex_ptr->updateParameters(deltaX.segment(vertex_ptr->getId() * this->vertex_size, this->vertex_size));
-//     }
-
-    int location = 0;
-    int l = 0;
-    int size = 0;
-
-    for (int i = 0; i < this->general_vertices.size(); i++) {
-        for (int k = 0; k < i; k++)
-            location += this->vertex_sizes[k] * this->vertex_sizes[k];
-        size = this->vertex_sizes[i];
-
-        for (int j = 0; j < this->general_vertices[i].size(); j++) {
-            l = location + j * size;
-            this->general_vertices[i][j]->updateParameters(deltaX.segment(l, size));
-        }
-    }
-}
-
-void Optimization_General::buildErrorVector() {
+void Optimization_General::buildErrorVecndJacobian() {
+    
+    //error vector
     Eigen::VectorXd* eVec = new Eigen::VectorXd();
     //structure of the error vector -> rows - number of measurements(observations in a measurement) * measurement count, cols - 1
     eVec->resize(this->edge_size * this->general_edge_count);
@@ -196,27 +232,83 @@ void Optimization_General::buildErrorVector() {
     Eigen::VectorXd errorVec_edge;
     errorVec_edge.resize(this->edge_size);
 
-    //double w_sigma;
+    general_vertex *first_vertex_ptr, *second_vertex_ptr;
+    Eigen::VectorXd estimatedParameters1, estimatedParameters2, Measurements;
 
-    auto processEdge = [&](general_edge* edge_ptr) {
-        general_vertex* first_vertex_ptr = edge_ptr->getFirstVertex();
-        general_vertex* second_vertex_ptr = edge_ptr->getSecondVertex();
+    //jacobian
+    int column_location,row_location;
+    int vertex_size;
+    int first_vertex_id, second_vertex_id;
 
-        Eigen::VectorXd estimatedParameters1 = first_vertex_ptr->getParameters();
-        Eigen::VectorXd estimatedParameters2 = second_vertex_ptr->getParameters();
+    Eigen::MatrixXd* J = new Eigen::MatrixXd();
+    //structure of the jacobian matrix -> rows - number of measurements(observations in a measurement) * measurement count, cols - n of parameters in a vertex x number of vertices
+    //Order - rows -> order of the edges in the edges vector, cols -> order of the vertices in the vertices vector
+    size_t jacobian_column_size = 0;
+    for (int i = 0; i < this->vertex_sizes.size(); i++)
+        jacobian_column_size += this->general_vertices[i].size() * this->vertex_sizes[i];
+    J->resize(this->edge_size * this->general_edge_count, jacobian_column_size);//change
 
-        Eigen::VectorXd Measurements = edge_ptr->getMeasurement();
-
-        this->computeError(estimatedParameters1, estimatedParameters2, Measurements, errorVec_edge);
-
-        eVec->segment(edge_ptr->getId() * this->edge_size, this->edge_size) = errorVec_edge;
-        };
-    //calculate the error vector for each edge and add the error to the error vector
+    Eigen::MatrixXd J_vertex;
 
     for (auto edge_ptr : this->general_edges) {
-        processEdge(edge_ptr);
-    }
+        first_vertex_ptr = edge_ptr->getFirstVertex();
+        second_vertex_ptr = edge_ptr->getSecondVertex();
 
+        first_vertex_id = first_vertex_ptr->getId();
+        second_vertex_id = second_vertex_ptr->getId();
+        estimatedParameters1 = first_vertex_ptr->getParameters();
+        estimatedParameters2 = second_vertex_ptr->getParameters();
+        Measurements = edge_ptr->getMeasurement();
+
+        row_location = edge_ptr->getId() * this->edge_size;
+
+        //update the error vector
+        this->computeError(estimatedParameters1, estimatedParameters2, Measurements, errorVec_edge);
+        eVec->segment(row_location, this->edge_size) = errorVec_edge;
+
+        //update the jacobian matrix - check if the vertex is fixed and skip it if it is withouth calculating the jacobian
+        if (!first_vertex_ptr->getFixed()) {
+            //resize the jvertex here
+            vertex_size = this->vertex_sizes[first_vertex_ptr->getType()];
+            J_vertex.resize(this->edge_size, vertex_size);
+
+            //calculate the first vertex jacobian
+            this->computeJacobianVertex(first_vertex_ptr->getParameters(), second_vertex_ptr->getParameters(), 1e-6, J_vertex);
+
+            //calculate the position of the first vertex in the jacobian matrix
+            column_location = 0;
+            for (int i = 0; i < first_vertex_ptr->getType(); i++) {
+                column_location += this->vertex_types[i] * this->vertex_sizes[i];
+            }
+            column_location += vertex_size * first_vertex_ptr->getId();
+
+            //add the first vertex jacobian to the jacobian matrix
+            //std::cout << "Row location: " << row_location << " | Column location: " << column_location << " | J_vertex: " << J_vertex<< std::endl;
+            J->block(row_location, column_location, J_vertex.rows(), J_vertex.cols()) = J_vertex;
+
+        }
+        if (!second_vertex_ptr->getFixed()) {
+
+            vertex_size = this->vertex_sizes[second_vertex_ptr->getType()];
+            J_vertex.resize(this->edge_size, vertex_size);
+
+            //calculate the first vertex jacobian
+            this->computeJacobianVertex(second_vertex_ptr->getParameters(), first_vertex_ptr->getParameters(), 1e-6, J_vertex);
+
+            //calculate the position of the first vertex in the jacobian matrix
+            column_location = 0;
+            for (int i = 0; i < second_vertex_ptr->getType(); i++) {
+                column_location += this->vertex_types[i] * this->vertex_sizes[i];
+            }
+            column_location += vertex_size * second_vertex_ptr->getId();
+
+            //add the first vertex jacobian to the jacobian matrix
+            J->block(row_location, column_location, J_vertex.rows(), J_vertex.cols()) = J_vertex;
+
+        }
+    }
+    delete this->Jacobian;
+    this->Jacobian = J;
     delete this->errorVec;
     this->errorVec = eVec;
 }
@@ -376,22 +468,17 @@ void Optimization_General::optimize(int iterations) {
     Eigen::MatrixXd Cov_inv = inverseDiagonal(*Cov);
 
 
-    //build the jacobian matrix
-    buildJacobian();
-    Eigen::MatrixXd* J = this->Jacobian;
-    //std::cout << *J << std::endl;
+    //buildErrorVector();
+    //buildJacobian();
+    buildErrorVecndJacobian();
 
+    Eigen::VectorXd* errorVec = this->errorVec;
+    Eigen::MatrixXd* J = this->Jacobian;
 
     //build the A matrix
     Eigen::MatrixXd A = J->transpose() * Cov_inv * *J;
-    //std::cout << "A matrix:\n " << A << std::endl;
-    //build the error vector
-    buildErrorVector();
-    Eigen::VectorXd* errorVec = this->errorVec;
-    //std::cout << "Error vector & Measurement Vector \n" << *errorVec << std::endl;
     
     cost = (errorVec->transpose() * *errorVec).norm() / errorVec->size() ;
-    
 
     //build the b vector
     Eigen::VectorXd b =-1 * J->transpose() * Cov_inv * *errorVec;
@@ -417,17 +504,15 @@ void Optimization_General::optimize(int iterations) {
         //update the pose and landmark vertices
         this->updateEstimates(poseUpdate);
         
+        //buildErrorVector();
+        //buildJacobian();
+        buildErrorVecndJacobian();
 
-        //build the jacobian matrix
-        buildJacobian();
+        errorVec = this->errorVec;
         J = this->Jacobian;
 
         //build the A matrix
         A = J->transpose() * Cov_inv * *J;
-
-        //build the error vector
-        buildErrorVector();
-        errorVec = this->errorVec;
 
         //build the b vector
         b = J->transpose() * Cov_inv * *errorVec;
