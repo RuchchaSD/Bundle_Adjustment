@@ -1,1 +1,2 @@
 add_subdirectory(g2o_BA)
+add_subdirectory(Normal_GN)

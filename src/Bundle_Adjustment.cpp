@@ -27,7 +27,11 @@ int main(int argc, char** argv) {
     std::vector<int> vertex_sizes = { 3,1 };
     Optimization_General* optimizer = new Optimization_General(edge_sizes, vertex_sizes);
 
-    optimizer->addVertex(N, Eigen::VectorXd::Zero(3), 0, false);
+    Eigen::VectorXd initial_est(3);
+    initial_est << 1.3,2.4,1.4;
+
+
+    optimizer->addVertex(N, initial_est, 0, false);
 
     for (int i = 0; i < N; i++) {
         //add fixed vertex
@@ -39,7 +43,7 @@ int main(int argc, char** argv) {
     //optimizer->removeEdge(54);
     //optimizer->removeVertex(54);
 
-
+    optimizer->setRobust(true,10);
     optimizer->initialize();
 
     Eigen::VectorXd parameters;

@@ -23,6 +23,7 @@ private:
     size_t vertex_size; // size of the vertex vector
 
     bool bRobust;
+    double delta;
 
     std::vector<int> vertex_sizes; // stores number of parameters for each vertex type
     std::vector<int> vertex_types;// stores how much of each vertex type is present
@@ -55,6 +56,7 @@ private:
     void computeError(const Eigen::VectorXd& estimatedParameters1, const Eigen::VectorXd& estimatedParameters2, const Eigen::VectorXd& Measurements, Eigen::VectorXd& errorVec);
     void buildJacobian();//take pose_vertices and landmark_vertices and build the jacobian
     void buildErrorVector();//take pose_vertices and landmark_vertices and build the error vector
+    void buildErrorVecndJacobian();//take pose_vertices and landmark_vertices and build the error vector and jacobian
     void buildCovarianceMatrix();//make the covariance matrix from w_sigma in the edges
     void updateEstimates(Eigen::VectorXd& deltaX);//update the pose and landmark vertices with the new estimates
     void RobustKernel(Eigen::VectorXd& estimateVec, Eigen::VectorXd& measurementVec, Eigen::VectorXd& Error);
@@ -68,8 +70,10 @@ public:
 
     void setVertexSize(int vertex_size);
     void setVertexSizes(std::vector<int> vertex_sizes);
-    void setRobust(bool robust);
+    void setRobust(bool robust = true, double delta = 10);
     bool getRobust();
+    void setDelta(double delta);
+    double getDelta();
     void setEdgeSize(int edge_size);
     void setEdgeSizes(std::vector<int> edge_sizes);
 
