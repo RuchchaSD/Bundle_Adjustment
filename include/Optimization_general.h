@@ -23,6 +23,7 @@ private:
     size_t vertex_size; // size of the vertex vector
 
     bool bRobust;
+    double delta;
 
     std::vector<int> vertex_sizes; // stores number of parameters for each vertex type
     std::vector<int> vertex_types;// stores how much of each vertex type is present
@@ -69,8 +70,10 @@ public:
 
     void setVertexSize(int vertex_size);
     void setVertexSizes(std::vector<int> vertex_sizes);
-    void setRobust(bool robust);
+    void setRobust(bool robust = true, double delta = 10);
     bool getRobust();
+    void setDelta(double delta);
+    double getDelta();
     void setEdgeSize(int edge_size);
     void setEdgeSizes(std::vector<int> edge_sizes);
 

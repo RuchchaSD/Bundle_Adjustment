@@ -223,11 +223,12 @@ void Optimization_General::buildJacobian() {
 }
 
 void Optimization_General::buildErrorVecndJacobian() {
-    
+
     //error vector
     Eigen::VectorXd* eVec = new Eigen::VectorXd();
     //structure of the error vector -> rows - number of measurements(observations in a measurement) * measurement count, cols - 1
     eVec->resize(this->edge_size * this->general_edge_count);
+    eVec->setZero();
 
     Eigen::VectorXd errorVec_edge;
     errorVec_edge.resize(this->edge_size);
@@ -247,6 +248,7 @@ void Optimization_General::buildErrorVecndJacobian() {
     for (int i = 0; i < this->vertex_sizes.size(); i++)
         jacobian_column_size += this->general_vertices[i].size() * this->vertex_sizes[i];
     J->resize(this->edge_size * this->general_edge_count, jacobian_column_size);//change
+    J->setZero();
 
     Eigen::MatrixXd J_vertex;
 
@@ -264,7 +266,12 @@ void Optimization_General::buildErrorVecndJacobian() {
 
         //update the error vector
         this->computeError(estimatedParameters1, estimatedParameters2, Measurements, errorVec_edge);
-        eVec->segment(row_location, this->edge_size) = errorVec_edge;
+        Eigen::VectorXd weights;
+        if (bRobust) 
+            weights = robustifyError(errorVec_edge, this->delta);
+		
+        eVec->segment(row_location, this->edge_size) += errorVec_edge;
+
 
         //update the jacobian matrix - check if the vertex is fixed and skip it if it is withouth calculating the jacobian
         if (!first_vertex_ptr->getFixed()) {
@@ -282,9 +289,13 @@ void Optimization_General::buildErrorVecndJacobian() {
             }
             column_location += vertex_size * first_vertex_ptr->getId();
 
+            if (bRobust) 
+				robustifyJacobianVertex(J_vertex, weights);
+			
+
             //add the first vertex jacobian to the jacobian matrix
             //std::cout << "Row location: " << row_location << " | Column location: " << column_location << " | J_vertex: " << J_vertex<< std::endl;
-            J->block(row_location, column_location, J_vertex.rows(), J_vertex.cols()) = J_vertex;
+            J->block(row_location, column_location, J_vertex.rows(), J_vertex.cols()) += J_vertex;
 
         }
         if (!second_vertex_ptr->getFixed()) {
@@ -302,8 +313,12 @@ void Optimization_General::buildErrorVecndJacobian() {
             }
             column_location += vertex_size * second_vertex_ptr->getId();
 
+            if (bRobust) 
+                robustifyJacobianVertex(J_vertex, weights);
+            
+
             //add the first vertex jacobian to the jacobian matrix
-            J->block(row_location, column_location, J_vertex.rows(), J_vertex.cols()) = J_vertex;
+            J->block(row_location, column_location, J_vertex.rows(), J_vertex.cols()) += J_vertex;
 
         }
     }
@@ -325,7 +340,7 @@ void Optimization_General::estimateY(std::vector<std::reference_wrapper<Eigen::V
 
     output.resize(1);
 
-    output[0] = (a * x * x * x + b * x + c);
+    output[0] = std::exp(a * x * x + b * x + c);
 }
 // public:
 Optimization_General::Optimization_General(std::vector<int> edge_sizes, std::vector<int> vertex_sizes) {
@@ -343,6 +358,7 @@ Optimization_General::Optimization_General(std::vector<int> edge_sizes, std::vec
     this->A = new Eigen::MatrixXd();
     this->b = new Eigen::VectorXd();
     this->bRobust = false;
+    this->delta = 1;
     //this->vertex_types.resize(vertex_sizes.size());
     //this->general_vertices.resize(vertex_sizes.size());
     //this->general_edges.resize(edge_sizes.size());
@@ -362,6 +378,7 @@ Optimization_General::Optimization_General() {
     this->A = new Eigen::MatrixXd();
     this->b = new Eigen::VectorXd();
     this->bRobust = false;
+    this->delta = 1;
 }
 
 void Optimization_General::setVertexSize(int vertex_size) {
@@ -372,13 +389,24 @@ void Optimization_General::setVertexSizes(std::vector<int> vertex_sizes) {
     this->vertex_sizes = vertex_sizes;
 }
 
-void Optimization_General::setRobust(bool bRobust) {
+void Optimization_General::setRobust(bool bRobust, double delta) {
 	this->bRobust = bRobust;
+    this->delta = delta;
 }
 
 bool Optimization_General::getRobust() {
 	return this->bRobust;
 }
+
+
+void Optimization_General::setDelta(double delta) {
+	this->delta = delta;
+}
+
+double Optimization_General::getDelta() {
+	return this->delta;
+}
+
 
 void Optimization_General::setEdgeSize(int edge_size) {
     this->edge_size = edge_size;
@@ -493,7 +521,15 @@ void Optimization_General::optimize(int iterations) {
 		//std::cout << "i: "<< current_iteration << "| Pose update: \n" << poseUpdate.transpose() << std::endl;
         update_norm = poseUpdate.norm();
 
-        std::cout << "cur_iter: " << current_iteration << " | cost: " << cost << " | update_norm: " << update_norm << " | b_max: " << b_max << std::endl;
+        std::cout << "cur_iter: " << current_iteration << " | cost: " << cost << " | update_norm: " << update_norm << " | b_max: " << b_max << " Estimated param: ";
+
+        for (int i = 0; i < general_vertices.size(); i++) {
+            for (int j = 0; j < general_vertices[i].size(); j++) {
+				std::cout << general_vertices[i][j]->getParameters().transpose() << ", ";
+			}
+		}
+
+        std::cout << std::endl;
 
         if (update_norm < th2){
             std::cout << "Update norm is less than threshold: " << update_norm << " < " << th2 << std::endl;
@@ -520,11 +556,11 @@ void Optimization_General::optimize(int iterations) {
         cost = (errorVec->transpose() * *errorVec).norm() / errorVec->size();
 
         if (cost >= last_cost) {
-            std::cout << "\ncost: cur_cost " << cost << " >= last_cost " << last_cost <<"| cur - last: "<< cost - last_cost << std::endl;
+            std::cout << "\ncost: cur_cost " << cost << " >= last_cost " << last_cost <<"| last - curr: "<<  last_cost - cost  << std::endl;
             break;
         }
         last_cost = cost;
-        b_max = abs(b.maxCoeff());
+        b_max = std::abs(b.maxCoeff());
     }
     std::cout << "\nOptimization finished\n"<<"b max :" << b_max << "| Iterations: " << current_iteration;
     std::cout << " Final cost: " << cost << " | update_norm: " << update_norm << std::endl;
