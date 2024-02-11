@@ -1,1 +1,1 @@
-add_executable(curve_fitting_GN "my_curvefitting.cpp" "../../src/data_generate.cpp" )
+add_executable(curve_fitting_GN "my_curvefitting.cpp")

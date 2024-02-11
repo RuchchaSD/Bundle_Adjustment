@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     auto [col1, col2] = readCsvColumns(filePath);
 
     int N = col1.size(); // Number of data points
-    double w_sigma = 1.0; // Noise of the data
+    double w_sigma = 1; // Noise of the data
     std::vector<Eigen::VectorXd> x_data(N), y_data(N); // Data
 
     for (int i = 0; i < N; i++) {
@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     Optimization_General* optimizer = new Optimization_General(edge_sizes, vertex_sizes);
 
     Eigen::VectorXd initial_est(3);
-    initial_est << 1.3,2.4,1.4;
+    initial_est <<1, 2, 1;
 
 
     optimizer->addVertex(N, initial_est, 0, false);
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     //optimizer->removeEdge(54);
     //optimizer->removeVertex(54);
 
-    optimizer->setRobust(true,10);
+    //optimizer->setRobust(true,100);
     optimizer->initialize();
 
     Eigen::VectorXd parameters;
@@ -53,7 +53,9 @@ int main(int argc, char** argv) {
     //measure the time before the optimization
     auto start = std::chrono::high_resolution_clock::now();
      
-    optimizer->optimize(100);
+    //optimizer->optimize(100);
+    optimizer->optimizeWithLM(100);
+
      
      //measure the time after the optimization
      auto finish = std::chrono::high_resolution_clock::now();
@@ -70,3 +72,12 @@ int main(int argc, char** argv) {
     
     return 0;
 }
+
+
+//compare with g2o - potentially step by step
+//improving accuracy
+//Bundle adjustment problem 
+//
+//
+//
+//

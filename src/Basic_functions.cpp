@@ -12,7 +12,7 @@ Eigen::MatrixXd inverseDiagonal(const Eigen::MatrixXd& A){
 }
 
 double huberWeight(double e, double delta) {
-	if (e <= delta)
+	if (std::abs(e) <= delta)
 		return 1;
 	else
 		return delta / std::abs(e);

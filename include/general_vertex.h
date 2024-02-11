@@ -43,7 +43,7 @@ public:
 
     void updateParameters(const Eigen::VectorXd& parametersUpdate);
 
-    void revertParameters(const Eigen::VectorXd& parametersUpdate);
+    void revertParameters();
 
     Eigen::VectorXd getParameters();
 

@@ -117,8 +117,13 @@ void optimize(int iterations, vector<double>& estimate, vector<vector<vector<dou
             H += J * J.transpose();
             b += -J * error.transpose();
 
+            std::cout << "\nIteration: " << i << " xi " << xi[0] << " jacobian: " << J.transpose()<<" | error_vector :" << error.transpose();
+
             cost += error.norm() * error.norm();
         }
+
+        std::cout << "\nComplete hessian: \n" << H << endl;
+        std::cout << "Complete b: \n" << b << endl;
 
         // Solve linear equation Hx=b
         VectorXd dx = H.ldlt().solve(b);
@@ -127,7 +132,7 @@ void optimize(int iterations, vector<double>& estimate, vector<vector<vector<dou
             break;
         }
 
-        if (i > 0 && cost + 1e-4 >= lastCost) {
+        if (i > 0 && cost >= lastCost) {
             std::cout << endl << "cost: " << cost << ">= last cost: " << lastCost << ", break." << endl;
             //error vector
             for (int j = 0; j < error.size(); j++) {
@@ -149,7 +154,7 @@ void optimize(int iterations, vector<double>& estimate, vector<vector<vector<dou
 
         lastCost = cost;
 
-        std::cout <<"Iteration: " << i <<"total cost: " << cost << ", | update: " << dx.transpose() <<
+        std::cout <<"Iteration: " << i <<" total cost: " << cost << ", | update: " << dx.transpose() <<
             " | estimated params : ";
 
         for (int j = 0; j < num_of_est; j++) {

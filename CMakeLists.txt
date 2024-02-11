@@ -21,10 +21,7 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/include
 	${PROJECT_SOURCE_DIR}/Thirdparty
 	${PROJECT_SOURCE_DIR}/Other
-	#${PROJECT_SOURCE_DIR}/ThirdParty/g2o
 	)
-
-#link_directories("${PROJECT_SOURCE_DIR}/Thirdparty/g2o/build/g2o")
 
 # Source directory for source files
 add_subdirectory(src)
