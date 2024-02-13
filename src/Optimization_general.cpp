@@ -134,6 +134,9 @@ void Optimization_General::buildErrorVector() {
 
         this->computeError(estimatedParameters1, estimatedParameters2, Measurements, errorVec_edge);
 
+        if (bRobust)
+            robustifyError(errorVec_edge, this->delta, edge_ptr->getCovariance());
+
         eVec->segment(edge_ptr->getId() * this->edge_size, this->edge_size) = errorVec_edge;
         };
     //calculate the error vector for each edge and add the error to the error vector
@@ -275,8 +278,11 @@ void Optimization_General::buildErrorVecndJacobian() {
         //update the error vector
         this->computeError(estimatedParameters1, estimatedParameters2, Measurements, errorVec_edge);
         Eigen::VectorXd weights;
+        //std::cout << "Edge: " << edge_ptr->getId() << "| before Error vector: " << errorVec_edge;
         if (bRobust) 
-            weights = robustifyError(errorVec_edge, this->delta);
+            weights = robustifyError(errorVec_edge, this->delta,edge_ptr->getCovariance());
+
+        //std::cout << " | after Error vector: " << errorVec_edge << std::endl;
 		
         eVec->segment(row_location, this->edge_size) += errorVec_edge;
 
@@ -297,8 +303,10 @@ void Optimization_General::buildErrorVecndJacobian() {
             }
             column_location += vertex_size * first_vertex_ptr->getId();
 
+            //std::cout << "Edge: " << edge_ptr->getId() << " | before J_vertex: " << J_vertex;
             if (bRobust) 
 				robustifyJacobianVertex(J_vertex, weights);
+            //std::cout << " | after J_vertex: " << J_vertex << std::endl;
 			
 
             //add the first vertex jacobian to the jacobian matrix
@@ -622,6 +630,7 @@ void Optimization_General::optimizeWithLM(int iterations) {
     buildCovarianceMatrix();
     Eigen::MatrixXd* Cov = this->Cov;
     Eigen::MatrixXd Cov_inv = inverseDiagonal(*Cov);
+    this->CovI = &Cov_inv;
 
     buildErrorVecndJacobian();
 
@@ -674,7 +683,7 @@ void Optimization_General::optimizeWithLM(int iterations) {
 
             std::cout << "rho: " << rho << " | update_norm: " << update_norm;
 
-            if (rho > 0) {
+            if (rho >= 0) {
                 buildErrorVecndJacobian();
                 errorVec_ = this->errorVec;
                 J = this->Jacobian;

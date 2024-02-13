@@ -47,3 +47,18 @@ StringPairVectors readCsvColumns(const std::string& filePath) {
     file.close();
     return { firstColumn, secondColumn };
 }
+
+
+void writeResultsCsv(const std::string& filePath,const std::string& name = "Results", const std::vector<double>& results = {}) {
+	std::ofstream file(filePath, std::ios::app);//make this only update the file
+    if (!file.is_open()) {
+		std::cerr << "Error opening file: " << filePath << std::endl;
+		return;
+	}
+    file << name << ",";
+    for (size_t i = 0; i < results.size() - 1; i++) {
+		file << results[i] << ",";
+	}
+    file << results[results.size() - 1] << std::endl;
+	file.close();
+}

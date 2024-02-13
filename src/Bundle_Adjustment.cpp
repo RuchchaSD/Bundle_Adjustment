@@ -7,6 +7,8 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
+    std::string Result_name = "Bundle_Adjustment";
+
     // Parameteres and data for the problem
     std::string filePath = "..\\..\\..\\..\\Other\\data\\data.csv"; // Update this to your actual file path
     auto [col1, col2] = readCsvColumns(filePath);
@@ -28,7 +30,7 @@ int main(int argc, char** argv) {
     Optimization_General* optimizer = new Optimization_General(edge_sizes, vertex_sizes);
 
     Eigen::VectorXd initial_est(3);
-    initial_est <<1, 2, 1;
+    initial_est <<1, 5, 3;
 
 
     optimizer->addVertex(N, initial_est, 0, false);
@@ -43,7 +45,7 @@ int main(int argc, char** argv) {
     //optimizer->removeEdge(54);
     //optimizer->removeVertex(54);
 
-    //optimizer->setRobust(true,100);
+    optimizer->setRobust(true,10);
     optimizer->initialize();
 
     Eigen::VectorXd parameters;
@@ -66,7 +68,12 @@ int main(int argc, char** argv) {
 
      //std::cout << "\nAfter optimization:" << std::endl;
 
-     std::cout << "\nOptimized parameters: " << optimizer->getVertexParameters(N).transpose()<<"\n\n";
+     Eigen::VectorXd final_est = optimizer->getVertexParameters(N);
+     std::vector<double> final_est_vec = std::vector<double>(final_est.data(), final_est.data() + final_est.size());
+     std::cout << "\nOptimized parameters: " << final_est.transpose()<<"\n\n";
+
+     std::string resultPath = "..\\..\\..\\..\\Other\\data\\results.csv";
+     writeResultsCsv(resultPath, Result_name, final_est_vec);
 
 
     

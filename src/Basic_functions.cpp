@@ -12,18 +12,21 @@ Eigen::MatrixXd inverseDiagonal(const Eigen::MatrixXd& A){
 }
 
 double huberWeight(double e, double delta) {
-	if (std::abs(e) <= delta)
-		return 1;
-	else
-		return delta / std::abs(e);
+    double dsqr = delta * delta;
+    if (e <= delta) {
+        return 1;
+    }
+    else {
+		return delta / std::sqrt(e);
+	}
 }
 
-Eigen::VectorXd robustifyError(Eigen::VectorXd& errorVec, double delta){
+Eigen::VectorXd robustifyError(Eigen::VectorXd& errorVec, double delta,double cov){
 
 	Eigen::VectorXd weights(errorVec.size());
     double temp = 0;
     for (int i = 0; i < errorVec.size(); i++) {
-        temp = huberWeight(errorVec(i), delta);
+        temp = huberWeight(errorVec(i) * errorVec(i) / cov, delta);
 		weights(i) = temp;
         errorVec(i) = temp * errorVec(i);
 	}

@@ -11,7 +11,7 @@ Eigen::MatrixXd inverseDiagonal(const Eigen::MatrixXd& A);
 
 double huberWeight(double e, double delta);
 
-Eigen::VectorXd robustifyError(Eigen::VectorXd& errorVec, double delta);
+Eigen::VectorXd robustifyError(Eigen::VectorXd& errorVec, double delta, double cov);
 
 void robustifyJacobianVertex(Eigen::MatrixXd& JVertex, const Eigen::VectorXd& weights);
 

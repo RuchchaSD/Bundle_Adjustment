@@ -43,6 +43,7 @@ private:
 
     Eigen::VectorXd* errorVec;
     Eigen::MatrixXd* Cov;
+    Eigen::MatrixXd* CovI;
     Eigen::MatrixXd* Jacobian;
 
     Eigen::VectorXd* deltaX;
