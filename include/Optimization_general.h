@@ -22,6 +22,7 @@ private:
     size_t fixed_vertex_count;
     size_t vertex_size; // size of the vertex vector
 
+    bool Verbose;
     bool bRobust;
     double delta;
 
@@ -42,6 +43,7 @@ private:
 
     Eigen::VectorXd* errorVec;
     Eigen::MatrixXd* Cov;
+    Eigen::MatrixXd* CovI;
     Eigen::MatrixXd* Jacobian;
 
     Eigen::VectorXd* deltaX;
@@ -59,6 +61,7 @@ private:
     void buildErrorVecndJacobian();//take pose_vertices and landmark_vertices and build the error vector and jacobian
     void buildCovarianceMatrix();//make the covariance matrix from w_sigma in the edges
     void updateEstimates(Eigen::VectorXd& deltaX);//update the pose and landmark vertices with the new estimates
+    void revertEstimates();//revert the pose and landmark vertices to the previous estimates
     void RobustKernel(Eigen::VectorXd& estimateVec, Eigen::VectorXd& measurementVec, Eigen::VectorXd& Error);
 
 
@@ -76,6 +79,7 @@ public:
     double getDelta();
     void setEdgeSize(int edge_size);
     void setEdgeSizes(std::vector<int> edge_sizes);
+    void setVerbose(bool verbose);
 
     void addVertex(int id, Eigen::VectorXd vertex_data, int vertex_type, bool isFixed = false);
     void removeVertex(int id);
@@ -89,6 +93,7 @@ public:
 
 
     void optimize(int iterations);
+    void optimizeWithLM(int iterations);
 
 };
 #endif

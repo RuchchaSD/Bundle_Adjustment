@@ -7,12 +7,14 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
+    std::string Result_name = "Bundle_Adjustment";
+
     // Parameteres and data for the problem
     std::string filePath = "..\\..\\..\\..\\Other\\data\\data.csv"; // Update this to your actual file path
     auto [col1, col2] = readCsvColumns(filePath);
 
     int N = col1.size(); // Number of data points
-    double w_sigma = 1.0; // Noise of the data
+    double w_sigma = 1; // Noise of the data
     std::vector<Eigen::VectorXd> x_data(N), y_data(N); // Data
 
     for (int i = 0; i < N; i++) {
@@ -28,7 +30,7 @@ int main(int argc, char** argv) {
     Optimization_General* optimizer = new Optimization_General(edge_sizes, vertex_sizes);
 
     Eigen::VectorXd initial_est(3);
-    initial_est << 1.3,2.4,1.4;
+    initial_est <<1, 5, 3;
 
 
     optimizer->addVertex(N, initial_est, 0, false);
@@ -53,7 +55,9 @@ int main(int argc, char** argv) {
     //measure the time before the optimization
     auto start = std::chrono::high_resolution_clock::now();
      
-    optimizer->optimize(100);
+    //optimizer->optimize(100);
+    optimizer->optimizeWithLM(100);
+
      
      //measure the time after the optimization
      auto finish = std::chrono::high_resolution_clock::now();
@@ -64,9 +68,23 @@ int main(int argc, char** argv) {
 
      //std::cout << "\nAfter optimization:" << std::endl;
 
-     std::cout << "\nOptimized parameters: " << optimizer->getVertexParameters(N).transpose()<<"\n\n";
+     Eigen::VectorXd final_est = optimizer->getVertexParameters(N);
+     std::vector<double> final_est_vec = std::vector<double>(final_est.data(), final_est.data() + final_est.size());
+     std::cout << "\nOptimized parameters: " << final_est.transpose()<<"\n\n";
+
+     std::string resultPath = "..\\..\\..\\..\\Other\\data\\results.csv";
+     writeResultsCsv(resultPath, Result_name, final_est_vec);
 
 
     
     return 0;
 }
+
+
+//compare with g2o - potentially step by step
+//improving accuracy
+//Bundle adjustment problem 
+//
+//
+//
+//

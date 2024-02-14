@@ -58,7 +58,7 @@ void general_vertex::updateParameters(const Eigen::VectorXd& parametersUpdate)
     this->parameters = this->parameters + parametersUpdate;
 }
 
-void general_vertex::revertParameters(const Eigen::VectorXd& parametersUpdate)
+void general_vertex::revertParameters()
 {
     this->parameters = this->previous_parameters;
 }

@@ -105,6 +105,14 @@ void Optimization_General::updateEstimates(Eigen::VectorXd& deltaX) {
     }
 }
 
+void Optimization_General::revertEstimates() {
+    for (int i = 0; i < this->general_vertices.size(); i++) {
+        for (int j = 0; j < this->general_vertices[i].size(); j++) {
+            this->general_vertices[i][j]->revertParameters();
+        }
+    }
+}
+
 void Optimization_General::buildErrorVector() {
     Eigen::VectorXd* eVec = new Eigen::VectorXd();
     //structure of the error vector -> rows - number of measurements(observations in a measurement) * measurement count, cols - 1
@@ -126,6 +134,9 @@ void Optimization_General::buildErrorVector() {
 
         this->computeError(estimatedParameters1, estimatedParameters2, Measurements, errorVec_edge);
 
+        if (bRobust)
+            robustifyError(errorVec_edge, this->delta, edge_ptr->getCovariance());
+
         eVec->segment(edge_ptr->getId() * this->edge_size, this->edge_size) = errorVec_edge;
         };
     //calculate the error vector for each edge and add the error to the error vector
@@ -134,7 +145,7 @@ void Optimization_General::buildErrorVector() {
         processEdge(edge_ptr);
     }
 
-    delete this->errorVec;
+    //delete this->errorVec;
     this->errorVec = eVec;
 }
 
@@ -216,7 +227,7 @@ void Optimization_General::buildJacobian() {
 
         }
     }
-    delete this->Jacobian;
+    //delete this->Jacobian;
     
     this->Jacobian = J;
     //std::cout << "Jacobian matrix: " << *Jacobian << std::endl;
@@ -267,8 +278,11 @@ void Optimization_General::buildErrorVecndJacobian() {
         //update the error vector
         this->computeError(estimatedParameters1, estimatedParameters2, Measurements, errorVec_edge);
         Eigen::VectorXd weights;
+        //std::cout << "Edge: " << edge_ptr->getId() << "| before Error vector: " << errorVec_edge;
         if (bRobust) 
-            weights = robustifyError(errorVec_edge, this->delta);
+            weights = robustifyError(errorVec_edge, this->delta,edge_ptr->getCovariance());
+
+        //std::cout << " | after Error vector: " << errorVec_edge << std::endl;
 		
         eVec->segment(row_location, this->edge_size) += errorVec_edge;
 
@@ -289,14 +303,18 @@ void Optimization_General::buildErrorVecndJacobian() {
             }
             column_location += vertex_size * first_vertex_ptr->getId();
 
+            //std::cout << "Edge: " << edge_ptr->getId() << " | before J_vertex: " << J_vertex;
             if (bRobust) 
 				robustifyJacobianVertex(J_vertex, weights);
+            //std::cout << " | after J_vertex: " << J_vertex << std::endl;
 			
 
             //add the first vertex jacobian to the jacobian matrix
             //std::cout << "Row location: " << row_location << " | Column location: " << column_location << " | J_vertex: " << J_vertex<< std::endl;
             J->block(row_location, column_location, J_vertex.rows(), J_vertex.cols()) += J_vertex;
-
+            
+            if(Verbose)
+            std::cout << "edge: "<< edge_ptr->getId() << " | J_vertex: " << J_vertex << " | error_vector: "<< errorVec_edge << std::endl;
         }
         if (!second_vertex_ptr->getFixed()) {
 
@@ -322,9 +340,9 @@ void Optimization_General::buildErrorVecndJacobian() {
 
         }
     }
-    delete this->Jacobian;
+    //delete this->Jacobian;
     this->Jacobian = J;
-    delete this->errorVec;
+    //delete this->errorVec;
     this->errorVec = eVec;
 }
 
@@ -340,7 +358,7 @@ void Optimization_General::estimateY(std::vector<std::reference_wrapper<Eigen::V
 
     output.resize(1);
 
-    output[0] = std::exp(a * x * x + b * x + c);
+    output[0] = std::exp(a * x * x +b * x + c);
 }
 // public:
 Optimization_General::Optimization_General(std::vector<int> edge_sizes, std::vector<int> vertex_sizes) {
@@ -359,6 +377,7 @@ Optimization_General::Optimization_General(std::vector<int> edge_sizes, std::vec
     this->b = new Eigen::VectorXd();
     this->bRobust = false;
     this->delta = 1;
+    this->Verbose = false;
     //this->vertex_types.resize(vertex_sizes.size());
     //this->general_vertices.resize(vertex_sizes.size());
     //this->general_edges.resize(edge_sizes.size());
@@ -379,6 +398,7 @@ Optimization_General::Optimization_General() {
     this->b = new Eigen::VectorXd();
     this->bRobust = false;
     this->delta = 1;
+    this->Verbose = false;
 }
 
 void Optimization_General::setVertexSize(int vertex_size) {
@@ -505,11 +525,20 @@ void Optimization_General::optimize(int iterations) {
 
     //build the A matrix
     Eigen::MatrixXd A = J->transpose() * Cov_inv * *J;
+
+
     
     cost = (errorVec->transpose() * *errorVec).norm() / errorVec->size() ;
 
     //build the b vector
     Eigen::VectorXd b =-1 * J->transpose() * Cov_inv * *errorVec;
+    if (Verbose) {
+        std::cout << "\nJacobian matrix: \n" << *J << std::endl;
+        std::cout << "\nError vector: \n" << *errorVec << std::endl;
+        std::cout << "\nHessian matrix: \n" << A << std::endl;
+        std::cout << "\nb vector: \n" << b << std::endl;
+	}
+
     
     b_max = abs(b.maxCoeff());
 
@@ -521,6 +550,8 @@ void Optimization_General::optimize(int iterations) {
 		//std::cout << "i: "<< current_iteration << "| Pose update: \n" << poseUpdate.transpose() << std::endl;
         update_norm = poseUpdate.norm();
 
+
+        ///////////////////////////////////////////////////////printing the results in each iteration////////////////////////////////////////////////////////
         std::cout << "cur_iter: " << current_iteration << " | cost: " << cost << " | update_norm: " << update_norm << " | b_max: " << b_max << " Estimated param: ";
 
         for (int i = 0; i < general_vertices.size(); i++) {
@@ -528,13 +559,15 @@ void Optimization_General::optimize(int iterations) {
 				std::cout << general_vertices[i][j]->getParameters().transpose() << ", ";
 			}
 		}
-
         std::cout << std::endl;
-
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        //////////check if the update norm is less than the threshold
         if (update_norm < th2){
             std::cout << "Update norm is less than threshold: " << update_norm << " < " << th2 << std::endl;
             break;
         }
+        /////////////////////////////////////////////////////////////
         
 
         //update the pose and landmark vertices
@@ -550,21 +583,146 @@ void Optimization_General::optimize(int iterations) {
         //build the A matrix
         A = J->transpose() * Cov_inv * *J;
 
+
         //build the b vector
-        b = J->transpose() * Cov_inv * *errorVec;
+        b = -1 * J->transpose() * Cov_inv * *errorVec;
 
         cost = (errorVec->transpose() * *errorVec).norm() / errorVec->size();
 
+        if (Verbose) {
+            std::cout << "\nJacobian matrix: \n" << *J << std::endl;
+            std::cout << "\nError vector: \n" << *errorVec << std::endl;
+            std::cout << "\nHessian matrix: \n" << A << std::endl;
+            std::cout << "\nb vector: \n" << b << std::endl;
+        }
+
         if (cost >= last_cost) {
-            std::cout << "\ncost: cur_cost " << cost << " >= last_cost " << last_cost <<"| last - curr: "<<  last_cost - cost  << std::endl;
+            std::cout << "\n\ncost: cur_cost " << cost << " >= last_cost " << last_cost <<"| last - curr: "<<  last_cost - cost  << std::endl;
             break;
         }
         last_cost = cost;
         b_max = std::abs(b.maxCoeff());
+
+
     }
     std::cout << "\nOptimization finished\n"<<"b max :" << b_max << "| Iterations: " << current_iteration;
     std::cout << " Final cost: " << cost << " | update_norm: " << update_norm << std::endl;
 }
+
+void Optimization_General::optimizeWithLM(int iterations) {
+    bool stop = false;
+    int v = 2;
+    double mu = 0;
+    double th1 = 1e-12;
+    double th2 = 1e-12;
+    double th3 = 1e-6;
+    double update_norm = 0;
+    double b_max = 0;
+    double rho = 0;
+    double _temp = 0;
+    int current_iteration = 0;
+    //double cost = 0;
+    double last_cost = std::numeric_limits<double>::infinity();
+    Eigen::VectorXd poseUpdate;
+
+    std::cout << "Optimization started! \n" << std::endl;
+
+    buildCovarianceMatrix();
+    Eigen::MatrixXd* Cov = this->Cov;
+    Eigen::MatrixXd Cov_inv = inverseDiagonal(*Cov);
+    this->CovI = &Cov_inv;
+
+    buildErrorVecndJacobian();
+
+    Eigen::VectorXd* errorVec_ = this->errorVec;
+    Eigen::MatrixXd* J = this->Jacobian;
+
+    Eigen::MatrixXd A = J->transpose() * Cov_inv * *J;
+    Eigen::VectorXd b = -1 * J->transpose() * Cov_inv * *errorVec_;
+
+    Eigen::MatrixXd A_temp;
+    A_temp.resizeLike(A);
+
+    mu = th3 * A.diagonal().maxCoeff();
+
+    std::cout << "initial mu: " << mu << "\n" << "initial b: " << b.transpose() << " | Initial max error: "<< errorVec_->maxCoeff() << "\ninitial A: \n" << A << "\n";
+
+    b_max = abs(b.maxCoeff());
+
+    stop = b_max < th1;
+    double numerator = 0, denominator = 0;
+
+    Eigen::VectorXd* tempErrorVec = new Eigen::VectorXd();
+
+    while (!stop && current_iteration < iterations) {
+		current_iteration++;
+        std::cout << "                 Iteration: " << current_iteration << "\n";
+        while (true) {
+            //solve the linear system
+            A_temp = A + mu * Eigen::MatrixXd::Identity(A.rows(), A.cols());
+            poseUpdate = A_temp.ldlt().solve(b);
+            update_norm = poseUpdate.norm();
+            //print some info
+            if (update_norm < th2) {//th2 should be multiplied with the norm of the parameters
+                std::cout << "Update norm is less than threshold: " << update_norm << " < " << th2 << std::endl;
+                stop = true;
+                break;
+            }
+
+            //update vertex parameters
+            this->updateEstimates(poseUpdate);
+
+            //calclate rho
+            buildErrorVector();
+            tempErrorVec = this->errorVec;
+            //std::cout<<"tempErrorVec: "<< (errorVec_->transpose() * *errorVec_ - tempErrorVec->transpose() * *tempErrorVec) <<std::endl;
+            //std::cout << "poseUpdate: " << (poseUpdate.transpose() * mu * poseUpdate + poseUpdate.transpose() * b) << std::endl;
+            numerator = (errorVec_->transpose() * *errorVec_ - tempErrorVec->transpose() * *tempErrorVec)[0];
+            denominator = (poseUpdate.transpose() * (mu*poseUpdate + b))[0];
+            rho = numerator / denominator;
+
+            std::cout << "rho: " << rho << " | update_norm: " << update_norm;
+
+            if (rho >= 0) {
+                buildErrorVecndJacobian();
+                errorVec_ = this->errorVec;
+                J = this->Jacobian;
+                A = J->transpose() * Cov_inv * *J;
+                b = -1 * J->transpose() * Cov_inv * *errorVec_;
+                b_max = abs(b.maxCoeff());
+
+                _temp = 1 - std::pow(2 * rho - 1, 3);
+                std::cout << " | Success | b_max: " << b_max << " mu: " << mu ;
+
+                mu = mu * std::min(1.0 / 3, 1 - std::pow(2 * rho - 1, 3));
+                v = 2;
+
+                std::cout << " | new mu: " << mu << " | Estimated param: ";
+                for (int i = 0; i < general_vertices.size(); i++) {
+                    for (int j = 0; j < general_vertices[i].size(); j++) {
+                        std::cout << general_vertices[i][j]->getParameters().transpose() << ", ";
+                    }
+                }
+                std::cout << std::endl;
+
+                if (b_max < th1) {
+					std::cout << "b_max is less than threshold: " << b_max << " < " << th1 << std::endl;
+                    stop = b_max < th1;
+                    break;
+				}
+            }
+            else {
+                std::cout << " | Repeat | numerator: " << numerator << " | Denominator: "<< denominator << " mu: "<< mu << std::endl;
+                this->revertEstimates();
+                mu = mu * v;
+                v = 2 * v;
+            }
+            if(rho > 0 || stop) break;
+        }
+    }
+    std::cout << "\nOptimization finished\n" << "b max :" << b_max <<" | update_norm: "<< update_norm << " | Iterations: " << current_iteration<< "\n";
+}
+
 
 void Optimization_General::initialize() {
 
