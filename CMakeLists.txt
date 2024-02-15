@@ -19,9 +19,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Include directories for header files
 include_directories(
 	${PROJECT_SOURCE_DIR}/include
-	${PROJECT_SOURCE_DIR}/Thirdparty
+	${PROJECT_SOURCE_DIR}/Thirdparty/include
 	${PROJECT_SOURCE_DIR}/Other
 	)
+
+#link_directories("${PROJECT_SOURCE_DIR}/Thirdparty/lib")
 
 # Source directory for source files
 add_subdirectory(src)

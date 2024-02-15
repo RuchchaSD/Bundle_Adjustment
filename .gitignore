@@ -10,5 +10,9 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 .vs
-Thirdparty/g2o
+Thirdparty/include/g2o
+Thirdparty/lib
+Other/g2o_examples
 out/build
+CMakePresets.json
+.vscode
