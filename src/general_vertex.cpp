@@ -1,4 +1,4 @@
-#include "../include/general_vertex.h"
+#include "general_vertex.h"
 
 void general_vertex::initialize(int id)
 {
@@ -9,10 +9,10 @@ void general_vertex::initialize(int id)
 }
 
 general_vertex::general_vertex(int g_id, int id, int vertex_type) : id(id), global_id(g_id), vertex_type(vertex_type),
-                isInitialized(false),isFixed(false),temp_id(-1){
- /*   this->isInitialized = false;
-    this->isFixed = false;
-    this->temp_id = -1;*/
+isInitialized(false), isFixed(false), temp_id(-1) {
+    /*   this->isInitialized = false;
+       this->isFixed = false;
+       this->temp_id = -1;*/
 }
 
 general_vertex::general_vertex(int g_id) : global_id(g_id) {

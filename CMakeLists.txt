@@ -21,14 +21,15 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/include
 	${PROJECT_SOURCE_DIR}/Thirdparty/include
 	${PROJECT_SOURCE_DIR}/Other
+	D:/Tools/vcpkg/vcpkg/installed/x64-windows/include
 	)
 
-#link_directories("${PROJECT_SOURCE_DIR}/Thirdparty/lib")
+link_directories("D:/Tools/vcpkg/vcpkg/installed/x64-windows/lib")
 
 # Source directory for source files
 add_subdirectory(src)
 add_subdirectory(Other)
-
+#add_subdirectory(Thirdparty/fmt)
 # If you plan on having tests, examples, or external libraries, include them here as well
 # add_subdirectory(tests)
 # add_subdirectory(examples)

@@ -1,4 +1,4 @@
-#include "../include/general_edge.h"
+#include "general_edge.h"
 
 general_edge::general_edge(int global_id) : global_id(global_id) {
     this->id = -1;

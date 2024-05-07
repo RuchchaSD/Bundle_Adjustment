@@ -3,22 +3,20 @@
 #include <chrono>
 #include "Optimization_General.h"
 #include "data_generate.h"
+//#include <fmt/core.h>
 //#include "Bundle_Adjustment.h"
-
-using namespace std;
-
 int main(int argc, char** argv) {
+
+    //fmt::print("Hello, world!\n");
 
     std::string Result_name = "Bundle_Adjustment";
 
     // Parameteres and data for the problem
     std::string filePath = "..\\..\\..\\..\\Other\\data\\data.csv"; // Update this to your actual file path
     auto [col1, col2] = readCsvColumns(filePath);
-
     int N = col1.size(); // Number of data points
     double w_sigma = 1; // Noise of the data
     std::vector<Eigen::VectorXd> x_data(N), y_data(N); // Data
-
     for (int i = 0; i < N; i++) {
         x_data[i].resize(1);
         y_data[i].resize(1);
@@ -39,7 +37,8 @@ int main(int argc, char** argv) {
 
     for (int i = 0; i < N; i++) {
         //add fixed vertex
-        optimizer->addVertex(i, x_data[i], 1, true);
+        optimizer->addVertex(i, x_data[i], 1,false);
+
         //add edge
         optimizer->addEdge(i, y_data[i], w_sigma, N, i);
     }
@@ -48,7 +47,7 @@ int main(int argc, char** argv) {
     //optimizer->removeVertex(54);
 
     optimizer->setRobust(true, 10);
-    optimizer->initialize();
+
 
     Eigen::VectorXd parameters;
 
@@ -57,6 +56,7 @@ int main(int argc, char** argv) {
     //measure the time before the optimization
     auto start = std::chrono::high_resolution_clock::now();
 
+    optimizer->initialize();
     //optimizer->optimize(100);
     optimizer->optimizeWithLM(100);
 
@@ -74,8 +74,16 @@ int main(int argc, char** argv) {
     std::vector<double> final_est_vec = std::vector<double>(final_est.data(), final_est.data() + final_est.size());
     std::cout << "\nOptimized parameters: " << final_est.transpose() << "\n\n";
 
+    std::vector<double> x_estimates(N);
+
     std::string resultPath = "..\\..\\..\\..\\Other\\data\\results.csv";
+
+    for (int i = 0; i < N; i++) {
+		x_estimates[i] = optimizer->getVertexParameters(i)[0];
+	}
+    writeResultsCsv(resultPath, "x_estimates", x_estimates);
     writeResultsCsv(resultPath, Result_name, final_est_vec);
+
 
 
 

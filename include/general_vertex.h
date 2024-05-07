@@ -13,7 +13,7 @@ class general_edge;
 
 class general_vertex
 {
-private:
+protected:
     int vertex_type; // 0,1,2,3 ......
     Eigen::VectorXd parameters;
     Eigen::VectorXd previous_parameters;
@@ -34,34 +34,28 @@ public:
     //Type
     void setType(int vertex_type);
     int getType();
+
     //Id
     int getId();
-
     int getGlobalId();
+
     //Parameters
-    void setParameters(const Eigen::VectorXd& parameters);
-
-    void updateParameters(const Eigen::VectorXd& parametersUpdate);
-
+    virtual void setParameters(const Eigen::VectorXd& parameters);
+    virtual void updateParameters(const Eigen::VectorXd& parametersUpdate);
     void revertParameters();
-
-    Eigen::VectorXd getParameters();
+    virtual Eigen::VectorXd getParameters();
 
     //Edges
     void addEdge(general_edge* edge, general_vertex* general_vertex_ptr);
-
     const std::map<int, general_edge*> getAttachedEdges();
-
     const std::map<int, general_vertex*> getAttachedVertices();
 
     //Fixedness
     void setFixed(bool isFixed);
-
     bool getFixed();
 
     //Initialization
     bool getInitialized();
-
     void setId(int id);
 
 };

@@ -16,7 +16,7 @@ class general_edge;
 
 class Optimization_General{
 
-private:
+protected:
     size_t general_edge_count;
     size_t vertex_count;
     size_t fixed_vertex_count;
@@ -52,7 +52,7 @@ private:
 
     //function to estimate the measurements from the pose and landmark vertices, this function is passed to the optimization class
     //last element of the vector should contain the reference to the output vector
-    void estimateY(std::vector<std::reference_wrapper<Eigen::VectorXd>>& input, Eigen::VectorXd& output);
+    virtual void estimateY(std::vector<std::reference_wrapper<Eigen::VectorXd>>& input, Eigen::VectorXd& output);
     void computeJacobianVertex(const Eigen::VectorXd& parameters, const Eigen::VectorXd& constants, const double step_size, Eigen::MatrixXd& J);
     //compute the error between the estimated parameters and the actual measurements
     void computeError(const Eigen::VectorXd& estimatedParameters1, const Eigen::VectorXd& estimatedParameters2, const Eigen::VectorXd& Measurements, Eigen::VectorXd& errorVec);
@@ -81,13 +81,13 @@ public:
     void setEdgeSizes(std::vector<int> edge_sizes);
     void setVerbose(bool verbose);
 
-    void addVertex(int id, Eigen::VectorXd vertex_data, int vertex_type, bool isFixed = false);
+    virtual void addVertex(int id, Eigen::VectorXd vertex_data, int vertex_type, bool isFixed = false);
     void removeVertex(int id);
-    Eigen::VectorXd getVertexParameters(int id);
+    virtual Eigen::VectorXd getVertexParameters(int id);
 
-    void addEdge(int id, Eigen::VectorXd measurement, double w_sigma, int first_vertex_id, int second_vertex_id);
+    virtual void addEdge(int id, Eigen::VectorXd measurement, double w_sigma, int first_vertex_id, int second_vertex_id);
     void removeEdge(int id);
-    Eigen::VectorXd getEdgeMeasurement(int id);
+    virtual Eigen::VectorXd getEdgeMeasurement(int id);
 
     void initialize();
 

@@ -95,7 +95,7 @@ void Optimization_General::updateEstimates(Eigen::VectorXd& deltaX) {
 
     for (int i = 0; i < this->general_vertices.size(); i++) {
         for (int k = 0; k < i; k++)
-            location += this->vertex_sizes[k] * this->vertex_sizes[k];
+            location += this->vertex_sizes[k] * this->general_vertices[k].size();
         size = this->vertex_sizes[i];
 
         for (int j = 0; j < this->general_vertices[i].size(); j++) {
@@ -347,8 +347,24 @@ void Optimization_General::buildErrorVecndJacobian() {
 }
 
 void Optimization_General::estimateY(std::vector<std::reference_wrapper<Eigen::VectorXd>>& input, Eigen::VectorXd& output) {
-    Eigen::VectorXd est1 = input[0].get(); // a,b,c in ax^2 + bx + c
-    Eigen::VectorXd est2 = input[1].get();// x in ax^2 + bx + c
+    Eigen::VectorXd est1;
+    Eigen::VectorXd est2;
+    
+    auto temp1 = input[1].get();// x in ax^2 + bx + c
+    auto temp2 = input[0].get(); // a,b,c in ax^2 + bx + c
+
+    if (temp1.size() == 1 && temp2.size() == 3) {
+		est1 = temp2;
+		est2 = temp1;
+	}
+    else if (temp1.size() == 3 && temp2.size() == 1) {
+		est1 = temp1;
+		est2 = temp2;
+	}
+    else {
+		std::cout << "Invalid input size" << std::endl;
+		return;
+	}
 
     double a = est1[0];
     double b = est1[1];
@@ -614,7 +630,7 @@ void Optimization_General::optimizeWithLM(int iterations) {
     int v = 2;
     double mu = 0;
     double th1 = 1e-12;
-    double th2 = 1e-12;
+    double th2 = 1e-6;
     double th3 = 1e-6;
     double update_norm = 0;
     double b_max = 0;
@@ -640,12 +656,18 @@ void Optimization_General::optimizeWithLM(int iterations) {
     Eigen::MatrixXd A = J->transpose() * Cov_inv * *J;
     Eigen::VectorXd b = -1 * J->transpose() * Cov_inv * *errorVec_;
 
+    //std::cout << "Error vector: \n" << errorVec_ -> transpose() << std::endl;
+    //std::cout << "Jacobian matrix: \n" << *J << std::endl;
+    std::cout << "b: \n" << b.transpose() << "\n";
+    //std::cout << "A: \n" << A << "\n";
+    
+
     Eigen::MatrixXd A_temp;
     A_temp.resizeLike(A);
 
-    mu = th3 * A.diagonal().maxCoeff();
+    mu = th3 * A.diagonal().cwiseAbs().maxCoeff();
 
-    std::cout << "initial mu: " << mu << "\n" << "initial b: " << b.transpose() << " | Initial max error: "<< errorVec_->maxCoeff() << "\ninitial A: \n" << A << "\n";
+    std::cout << "initial mu: " << mu << " | Initial max error: " << errorVec_->maxCoeff()<<"\n";
 
     b_max = abs(b.maxCoeff());
 
@@ -660,7 +682,11 @@ void Optimization_General::optimizeWithLM(int iterations) {
         while (true) {
             //solve the linear system
             A_temp = A + mu * Eigen::MatrixXd::Identity(A.rows(), A.cols());
+            std::cout << "A_temp: \n" << A_temp << "\n";
+
+
             poseUpdate = A_temp.ldlt().solve(b);
+            //update_norm = abs(poseUpdate.maxCoeff());
             update_norm = poseUpdate.norm();
             //print some info
             if (update_norm < th2) {//th2 should be multiplied with the norm of the parameters
@@ -671,16 +697,18 @@ void Optimization_General::optimizeWithLM(int iterations) {
 
             //update vertex parameters
             this->updateEstimates(poseUpdate);
+            std::cout << "poseUpdate: \n" << poseUpdate.transpose() << "\n";
+
 
             //calclate rho
+            //std::cout << "Error vector: \n" << *errorVec_ << std::endl;
             buildErrorVector();
             tempErrorVec = this->errorVec;
-            //std::cout<<"tempErrorVec: "<< (errorVec_->transpose() * *errorVec_ - tempErrorVec->transpose() * *tempErrorVec) <<std::endl;
-            //std::cout << "poseUpdate: " << (poseUpdate.transpose() * mu * poseUpdate + poseUpdate.transpose() * b) << std::endl;
+
             numerator = (errorVec_->transpose() * *errorVec_ - tempErrorVec->transpose() * *tempErrorVec)[0];
             denominator = (poseUpdate.transpose() * (mu*poseUpdate + b))[0];
             rho = numerator / denominator;
-
+            //std::cout << "numerator: " << numerator << " | Denominator: " << denominator << " | rho: " << rho << "\n";
             std::cout << "rho: " << rho << " | update_norm: " << update_norm;
 
             if (rho >= 0) {
@@ -690,6 +718,10 @@ void Optimization_General::optimizeWithLM(int iterations) {
                 A = J->transpose() * Cov_inv * *J;
                 b = -1 * J->transpose() * Cov_inv * *errorVec_;
                 b_max = abs(b.maxCoeff());
+                //std::cout << "Error vector: \n" << errorVec_->transpose() << std::endl;
+                //std::cout << "Jacobian matrix: \n" << *J << std::endl;
+                std::cout << "b: \n" << b.transpose() << "\n";
+                //std::cout << "A: \n" << A << "\n";
 
                 _temp = 1 - std::pow(2 * rho - 1, 3);
                 std::cout << " | Success | b_max: " << b_max << " mu: " << mu ;
@@ -698,12 +730,12 @@ void Optimization_General::optimizeWithLM(int iterations) {
                 v = 2;
 
                 std::cout << " | new mu: " << mu << " | Estimated param: ";
-                for (int i = 0; i < general_vertices.size(); i++) {
-                    for (int j = 0; j < general_vertices[i].size(); j++) {
-                        std::cout << general_vertices[i][j]->getParameters().transpose() << ", ";
-                    }
-                }
-                std::cout << std::endl;
+                //for (int i = 0; i < general_vertices.size(); i++) {
+                //    for (int j = 0; j < general_vertices[i].size(); j++) {
+                        std::cout << general_vertices[0][0]->getParameters().transpose();
+                //    }
+                //}
+                        std::cout << "\n" << "\n";
 
                 if (b_max < th1) {
 					std::cout << "b_max is less than threshold: " << b_max << " < " << th1 << std::endl;
