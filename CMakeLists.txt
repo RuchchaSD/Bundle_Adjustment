@@ -1,14 +1,13 @@
-﻿cmake_minimum_required(VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.8)
+
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-# Set the project name and version
-project(Bundle_Adjustment VERSION 1.0.0)
+project(Custom_BundleAdjustment VERSION 1.0 DESCRIPTION "Custom library for bundle adjustment")
 
-# Specify the C++ standard, use C++20 if supported
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set(CMAKE_CXX_STANDARD 20)
 else()
@@ -16,22 +15,35 @@ else()
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Include directories for header files
-include_directories(
-	${PROJECT_SOURCE_DIR}/include
-	${PROJECT_SOURCE_DIR}/Thirdparty/include
-	${PROJECT_SOURCE_DIR}/Other
-	)
 
-#link_directories("${PROJECT_SOURCE_DIR}/Thirdparty/lib")
+# Function to recursively add all subdirectories that contain header files
+function(add_include_directories_recursively directory)
+    # Add the current directory
+    include_directories(${directory})
 
-# Source directory for source files
-add_subdirectory(src)
-add_subdirectory(Other)
+    # Get all subdirectories
+    file(GLOB children RELATIVE ${directory} ${directory}/*)
+    foreach(child ${children})
+        if(IS_DIRECTORY ${directory}/${child})
+            # Recursively add subdirectories
+            add_include_directories_recursively(${directory}/${child})
+        endif()
+    endforeach()
+endfunction()
 
-# If you plan on having tests, examples, or external libraries, include them here as well
-# add_subdirectory(tests)
-# add_subdirectory(examples)
-# add_subdirectory(libs)
+add_include_directories_recursively(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/Thirdparty)
 
-# TODO: Add install targets if needed
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+
+add_library(Custom_BundleAdjustment ${SOURCES})
+
+# Automatically add directories that contain CMakeLists.txt
+file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/Examples ${PROJECT_SOURCE_DIR}/Examples/*)
+foreach(child ${children})
+  if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/${child})
+    if(EXISTS "${PROJECT_SOURCE_DIR}/Examples/${child}/CMakeLists.txt")
+      add_subdirectory(Examples/${child})
+    endif()
+  endif()
+endforeach()

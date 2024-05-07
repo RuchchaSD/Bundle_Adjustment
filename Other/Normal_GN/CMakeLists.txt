@@ -1,1 +1,0 @@
-add_executable(curve_fitting_GN "my_curvefitting.cpp")
