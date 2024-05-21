@@ -777,7 +777,7 @@ void HessianOrb::initialize()
 		(*wBlocks)[edgeLocation] = std::make_shared<Eigen::Block<Eigen::MatrixXd>>(W->block(0, static_cast<int>(edgeLocation) * p->vertex2Size, p->vertex1Size, p->vertex2Size));
 	}
 
-
+	this->isInitialized = true;
 
 }
 void HessianOrb::finalize()
@@ -848,7 +848,9 @@ void HessianOrb::setJacobianVertex(int vertex1Location,int vertex2Location,int e
 	//std::cout << "jacobian2Blockrows: " << jacobian2Block->rows() << " jacobian2Blockcols: " << jacobian2Block->cols() << std::endl;
 #ifndef NDEBUG
 	assert(jacobian1Block->rows() == p->edgeSize && jacobian1Block->cols() == p->vertex1Size);
-	assert((*jacobiansToABlocks)[vertex1Location].size() < p->numOberservationsPerVertex1[vertex1Location]);assert(isInitialized);
+	assert((*jacobiansToABlocks)[vertex1Location].size() < p->numOberservationsPerVertex1[vertex1Location]);
+	
+	assert(isInitialized);
 	assert(jacobian2Block->rows() == p->edgeSize && jacobian2Block->cols() == p->vertex2Size);
 	assert((*jacobiansToBBlocks)[vertex2Location].size() < p->numOberservationsPerVertex2[vertex2Location]);
 	assert(edgeLocation < p->numEdges);

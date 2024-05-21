@@ -78,19 +78,59 @@ Eigen::VectorXd Generated_dataSet_BA::convertToVector(std::vector<std::string> d
     return vec;
 }
 
-void Generated_dataSet_BA::writeResultsCsv(const std::string& filePath, const std::string& name, const std::vector<double>& results)
+void Generated_dataSet_BA::writeResultsCsv(const std::string& filepath, const std::vector<std::string>& columnNames, const std::vector<std::vector<double>>& data)
 {
-    std::ofstream file(filePath, std::ios::app);//make this only update the file
+    // Check if all data rows are the correct length
+    for (const auto& row : data) {
+        if (row.size() != columnNames.size()) {
+            std::cerr << "Error: All data rows must have the same number of elements as there are column names." << std::endl;
+            return;
+        }
+    }
+
+    // Open or create the file
+    std::ofstream file(filepath, std::ios::out | std::ios::trunc); // std::ios::trunc to overwrite the file
+
     if (!file.is_open()) {
-        std::cerr << "Error opening file: " << filePath << std::endl;
+        std::cerr << "Failed to open or create the file." << std::endl;
         return;
     }
-    file << name << ",";
-    for (size_t i = 0; i < results.size() - 1; i++) {
-        file << results[i] << ",";
+
+    // Write the column names
+    bool firstColumnName = true;
+    for (const auto& name : columnNames) {
+        if (!firstColumnName) file << ",";
+        file << name;
+        firstColumnName = false;
     }
-    file << results[results.size() - 1] << std::endl;
+    file << "\n";
+
+    // Write the data
+    for (const auto& row : data) {
+        bool firstColumn = true;
+        for (double value : row) {
+            if (!firstColumn) file << ",";
+            file << value;
+            firstColumn = false;
+        }
+        file << "\n";
+    }
+
     file.close();
+    std::cout << "File written successfully." << std::endl;
+}
+
+std::string Generated_dataSet_BA::askFileLocation(const std::string& fileName)
+{
+    return askQuestion("Enter the location for the file \"" + fileName + "\": ");
+}
+
+std::string Generated_dataSet_BA::askQuestion(const std::string& question)
+{
+    std::cout << question << std::endl;
+    std::string answer;
+    std::getline(std::cin, answer);
+    return answer;
 }
 
 std::unique_ptr<OptimizerSettings> Generated_dataSet_BA::makeSettings()
@@ -128,7 +168,7 @@ Generated_dataSet_BA::Generated_dataSet_BA()
 {
     timer = std::make_shared<Timer>();
 
-    timer->setVariables({ "Total", "Initialize", "Optimize", "Finalize", "Jacobian", "Error", "Hessian", "bVector", "update"});
+    timer->setVariables({ "Total", "Initialize", "Optimize", "Finalize", "Jacobian", "Error", "Hessian", "bVector", "update" });
 }
 Generated_dataSet_BA::~Generated_dataSet_BA()
 {
@@ -136,14 +176,38 @@ Generated_dataSet_BA::~Generated_dataSet_BA()
 void Generated_dataSet_BA::do_BA()
 {
     //read data - change destination to data/poses.csv, data/landmarks.csv, data/projection.csv
-    std::string poseFile = "D:/University/C++/Source/repos/Bundle_Adjustment/Other/data/poses.csv";
-    std::string landmarkFile = "D:/University/C++/Source/repos/Bundle_Adjustment/Other/data/landmarks.csv";
-    std::string projectionsFile = "D:/University/C++/Source/repos/Bundle_Adjustment/Other/data/projection.csv";
+    std::string poseFile = "D:/University/C++/Source/repos/temp/Other/data/poses.csv";
+    std::string landmarkFile = "D:/University/C++/Source/repos/temp/Other/data/landmarks.csv";
+    std::string projectionsFile = "D:/University/C++/Source/repos/temp/Other/data/projection.csv";
+
+    std::string answer = askQuestion("data in installation directory? (y/n)");
+
+    if (answer == "y" || answer == "Y") {
+        std::string poseFile = "poses.csv";
+        std::string landmarkFile = "landmarks.csv";
+        std::string projectionsFile = "projection.csv";
+    }
+    else if (answer == "n" || answer == "N")
+    {
+        std::string poseFile = askFileLocation("poses.csv");
+        std::string landmarkFile = askFileLocation("landmarks.csv");
+        std::string projectionsFile = askFileLocation("projection.csv");
+    }
+    else if (answer != "d" && answer != "D")
+    {
+        std::cerr << "Invalid input. Exiting..." << std::endl;
+        return;
+    }
 
 
+    std::cout << "Reading poseFile from:: " << poseFile << std::endl;
     auto poseData = readCSV(poseFile);
+    std::cout << "Reading landmarkFile from:: " << landmarkFile << std::endl;
     auto landmarkData = readCSV(landmarkFile);
+    std::cout << "Reading projectionsFile from:: " << projectionsFile << std::endl;
     auto projectionData = readCSV(projectionsFile);
+
+    std::cout << "Data read successfully!\n\n" << std::endl;
 
     size_t num_cameras = poseData.size() - 1; // -1 for the header
     size_t num_landmarks = landmarkData.size() - 1;
@@ -154,19 +218,19 @@ void Generated_dataSet_BA::do_BA()
 
     for (int i = 1; i < num_cameras + 1; i++) { // +1 for the header
         initialError.segment(6 * (i - 1), 6) = convertToVector(poseData[i], 7, 13) - convertToVector(poseData[i], 1, 7);
-        finalError.segment(6 * (i - 1), 6) = - convertToVector(poseData[i], 1, 7);
+        finalError.segment(6 * (i - 1), 6) = -convertToVector(poseData[i], 1, 7);
     }
 
     for (int i = 1; i < num_landmarks + 1; i++) { // +1 for the header
         initialError.segment(6 * num_cameras + 3 * (i - 1), 3) = convertToVector(landmarkData[i], 4, 7) - convertToVector(landmarkData[i], 1, 4);
-        finalError.segment(6 * num_cameras + 3 * (i - 1), 3) = - convertToVector(landmarkData[i], 1, 4);
+        finalError.segment(6 * num_cameras + 3 * (i - 1), 3) = -convertToVector(landmarkData[i], 1, 4);
     }
 
-    std::cout << "Number of cameras: " << num_cameras<<" | ";
-    std::cout << "Number of landmarks: " << num_landmarks<<"\n";
+    std::cout << "Number of cameras: " << num_cameras << " | ";
+    std::cout << "Number of landmarks: " << num_landmarks << "\n";
     std::cout << "Number of observations: " << num_observations << "\n";
 
-	//set optimizerAlgorithm
+    //set optimizerAlgorithm
     OptimizerFactoryProducer factoryProducer;
 
     std::unique_ptr<OptimizerFactory> optimizerFactory = factoryProducer.getOptimizerFactory("Orb New");
@@ -195,7 +259,7 @@ void Generated_dataSet_BA::do_BA()
         std::shared_ptr<Eigen::VectorXd> tempObservation = std::make_shared<Eigen::VectorXd>(convertToVector(projectionData[i], 5, 7));
         std::shared_ptr<Eigen::VectorXd> tempSigma = std::make_shared<Eigen::VectorXd>(convertToVector(projectionData[i], 3, 5));
         optimizerAlgorithm->addEdge(std::stoi(projectionData[i][0]), std::stoi(projectionData[i][1]), std::stoi(projectionData[i][2]) + num_cameras
-            ,std::move(tempObservation),std::move(tempSigma));
+            , std::move(tempObservation), std::move(tempSigma));
     }
 
     poseData.clear();
@@ -253,5 +317,5 @@ void Generated_dataSet_BA::do_BA()
 
     std::cout << "Final error norm: " << finalError.norm() << " Final max Error: " << finalError.maxCoeff() << std::endl;
     std::cout << "Optimization finished!" << std::endl;
-	
+
 }
