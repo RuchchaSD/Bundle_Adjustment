@@ -199,3 +199,4 @@ void OptimizationAlgorithmLevenberg::finalize()
     structure->finalize();
     isInitialized = false;
 }
+ 

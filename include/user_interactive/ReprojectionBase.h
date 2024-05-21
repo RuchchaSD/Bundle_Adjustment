@@ -6,7 +6,7 @@ class ReprojectionBase
 {
 	protected:
 
-
+		 
 	public:
 	ReprojectionBase();
 	~ReprojectionBase();

@@ -484,5 +484,5 @@ public:
 	virtual void setEdge(int vertex1Location, int vertex2Location, int edgeLocation, std::shared_ptr<Eigen::Block<Eigen::MatrixXd>> WBlock) override;
 	virtual bool solve() override;
 
-};
+}; 
 

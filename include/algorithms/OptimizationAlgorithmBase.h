@@ -21,4 +21,4 @@ public:
 			this->Optimize(p->maxIterations);
 	}
 
-};
+}; 

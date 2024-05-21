@@ -36,7 +36,7 @@ public:
 	void setUpdated(bool updated) { isUpdated_ = updated; }
 };
 
-class HuberKernel : public RobustKernelBase
+class HuberKernel : public RobustKernelBase 
 {
 protected:
 	double calculateWeight(double residual) override;

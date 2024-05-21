@@ -1372,5 +1372,5 @@ void SolverMarginalized::solveForType2()
 	if(p->DebugMode && p->verbosityLevel > 3)
 		std::cout << "type2UpdateVec: " << "\n\n" << type2UpdateVec->transpose() << "\n\n\n" << std::endl;
 }
-
+ 
 

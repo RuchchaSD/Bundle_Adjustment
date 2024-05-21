@@ -48,7 +48,7 @@ public:
         return std::chrono::duration<double, std::ratio<60>>(getAccumulatedDuration(name)).count();
     }
 
-    void setEnabled(bool state) {
+    void setEnabled(bool state) { 
         enabled = state;
     }
 

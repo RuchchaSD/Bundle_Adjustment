@@ -55,4 +55,4 @@ void ProblemStructure::finalize()
 	else {
 		std::cerr << "ProblemStructure::finalize: Not initialized" << std::endl;
 	}
-}
+} 

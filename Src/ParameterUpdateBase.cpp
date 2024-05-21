@@ -8,7 +8,7 @@ ParameterUpdateBase::~ParameterUpdateBase()
 {
 }
 
-void ParameterUpdateBase::update(Eigen::VectorXd& parameters, const Eigen::VectorXd& update)
+void ParameterUpdateBase::update(Eigen::VectorXd& parameters, const Eigen::VectorXd& update) 
 {
 	parameters += update;
 }

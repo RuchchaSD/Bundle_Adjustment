@@ -18,3 +18,4 @@ public:
 	void Optimize(int maxIterations) override;
 };
 
+ 

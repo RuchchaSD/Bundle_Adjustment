@@ -295,3 +295,4 @@ void OptimizerOrbSlam::Optimize(int n)
 		std::cerr << "Error: OptimizerOrbSlam::Optimize not initialized" << std::endl;
 	}
 }
+ 

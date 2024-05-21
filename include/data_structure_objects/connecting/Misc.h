@@ -50,7 +50,7 @@ struct Propertise
 
 	void initialize()
 	{
-		totalObservations = numEdges * edgeSize;
+		totalObservations = numEdges * edgeSize; 
 		totalType1Parameters = numActiveVertices1 * vertex1Size;
 		totalType2Parameters = numActiveVertices2 * vertex2Size;
 		totalWidth = totalType1Parameters + totalType2Parameters;

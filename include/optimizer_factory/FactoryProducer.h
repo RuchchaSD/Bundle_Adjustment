@@ -5,5 +5,5 @@ class OptimizerFactoryProducer
 {
 public:
 	std::unique_ptr<OptimizerFactory> getOptimizerFactory(std::string factoryType);
-};
+}; 
 

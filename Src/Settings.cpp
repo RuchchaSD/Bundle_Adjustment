@@ -14,4 +14,4 @@ bool OptimizerSettings::validate()
 
     this->isValid = true;
     return this->isValid;
-}
+} 

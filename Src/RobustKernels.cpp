@@ -62,7 +62,7 @@ double RobustKernelBase::calculateWeight(double residual)
 
 
 
-double HuberKernel::calculateWeight(double residual)
+double HuberKernel::calculateWeight(double residual) 
 {
 	residual = abs(residual);
 	if (residual < this->sqrt_delta_) {

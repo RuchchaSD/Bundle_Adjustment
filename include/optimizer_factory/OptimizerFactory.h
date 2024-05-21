@@ -29,4 +29,4 @@ public:
 
 	std::unique_ptr<OptimizerBase> getOptimizer(std::unique_ptr<OptimizerSettings> settings) override;
 
-};
+}; 

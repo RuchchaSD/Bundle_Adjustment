@@ -113,4 +113,4 @@ public:
 
 	std::shared_ptr<Vertex> getVertex1() { return v1; }
 	std::shared_ptr<Vertex> getVertex2() { return v2; }
-};
+}; 

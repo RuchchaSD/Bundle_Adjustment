@@ -8,3 +8,4 @@ OptimizerBase::OptimizerBase()
 OptimizerBase::~OptimizerBase()
 {
 }
+ 

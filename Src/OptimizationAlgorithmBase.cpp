@@ -7,3 +7,4 @@ OptimizationAlgorithmBase::OptimizationAlgorithmBase()
 OptimizationAlgorithmBase::~OptimizationAlgorithmBase()
 {
 }
+ 

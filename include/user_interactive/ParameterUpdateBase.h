@@ -3,7 +3,7 @@
 #include <Eigen/Dense>
 class ParameterUpdateBase
 {
-	protected:
+	protected: 
 
 	public:
 		ParameterUpdateBase();

@@ -29,5 +29,5 @@ public:
 	virtual void addEdge(int id, int vertex1_id, int vertex2_id, std::shared_ptr<Eigen::VectorXd> observations, std::shared_ptr<Eigen::VectorXd> sigma) = 0;
 
 	virtual void Optimize(int n) = 0;
-};
+}; 
 
