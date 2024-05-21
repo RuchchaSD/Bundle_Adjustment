@@ -1,47 +1,105 @@
+// RobustKernels.h
 #pragma once
-#include <Eigen/core>
+#include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include "BaseDataStructure.h"
 
-class RobustKernelBase : public BaseDataStructure
-{ 
+/**
+ * @class RobustKernelBase
+ * @brief Base class for robust kernel functions.
+ */
+class RobustKernelBase : public BaseDataStructure {
 protected:
-	bool isInitialized;
-	std::shared_ptr<Eigen::VectorXd> weightsVec;
+    bool isInitialized;
+    std::shared_ptr<Eigen::VectorXd> weightsVec;
+    bool isUpdated_;
+    double delta_;
+    double sqrt_delta_;
 
-	bool isUpdated_;
-
-	double delta_;
-	double sqrt_delta_;
-	virtual double calculateWeight(double residual);
+    /**
+     * @brief Calculates the weight for a given residual.
+     * @param residual Residual value.
+     * @return Weight value.
+     */
+    virtual double calculateWeight(double residual);
 
 public:
-	RobustKernelBase();
-	~RobustKernelBase();
+    /**
+     * @brief Default constructor.
+     */
+    RobustKernelBase();
 
-	//virtual void initialize(const Eigen::VectorXi data,double delta);
-	//virtual void initialize(const int totalNumOfResiduals);
-	virtual void initialize() override;
-	void finalize() override;
+    /**
+     * @brief Destructor.
+     */
+    ~RobustKernelBase();
 
+    /**
+     * @brief Initializes the robust kernel.
+     */
+    virtual void initialize() override;
 
-	virtual void robustifyResiduals(Eigen::VectorXd& residuals) ;
-	virtual void robustifyJacobian(Eigen::MatrixXd& J);
-	std::shared_ptr<const Eigen::VectorXd> getWeightsVec() { 
-		return weightsVec; 
-	}
+    /**
+     * @brief Finalizes the robust kernel.
+     */
+    void finalize() override;
 
-	bool isUpdated() const { return isUpdated_; }
-	void setUpdated(bool updated) { isUpdated_ = updated; }
+    /**
+     * @brief Applies the robust kernel to residuals.
+     * @param residuals Vector of residuals.
+     */
+    virtual void robustifyResiduals(Eigen::VectorXd& residuals);
+
+    /**
+     * @brief Applies the robust kernel to the Jacobian matrix.
+     * @param J Jacobian matrix.
+     */
+    virtual void robustifyJacobian(Eigen::MatrixXd& J);
+
+    /**
+     * @brief Gets the vector of weights.
+     * @return Shared pointer to the vector of weights.
+     */
+    std::shared_ptr<const Eigen::VectorXd> getWeightsVec() {
+        return weightsVec;
+    }
+
+    /**
+     * @brief Checks if the robust kernel is updated.
+     * @return True if updated, false otherwise.
+     */
+    bool isUpdated() const { return isUpdated_; }
+
+    /**
+     * @brief Sets the updated state of the robust kernel.
+     * @param updated Updated state to set.
+     */
+    void setUpdated(bool updated) { isUpdated_ = updated; }
 };
 
-class HuberKernel : public RobustKernelBase 
-{
+/**
+ * @class HuberKernel
+ * @brief Huber robust kernel function.
+ */
+class HuberKernel : public RobustKernelBase {
 protected:
-	double calculateWeight(double residual) override;
+    /**
+     * @brief Calculates the weight for a given residual using the Huber kernel.
+     * @param residual Residual value.
+     * @return Weight value.
+     */
+    double calculateWeight(double residual) override;
 
 public:
-	HuberKernel() : RobustKernelBase() {};
-	~HuberKernel() {};
+    /**
+     * @brief Default constructor.
+     */
+    HuberKernel() : RobustKernelBase() {};
+
+    /**
+     * @brief Destructor.
+     */
+    ~HuberKernel() {};
 };
+

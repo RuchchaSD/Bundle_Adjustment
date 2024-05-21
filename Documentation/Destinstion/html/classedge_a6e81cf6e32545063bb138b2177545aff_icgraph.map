@@ -1,0 +1,5 @@
+<map id="edge::getVertex2" name="edge::getVertex2">
+<area shape="rect" id="Node000001" title="Gets the second vertex associated with the edge." alt="" coords="237,5,357,32"/>
+<area shape="rect" id="Node000002" href="$class_optimizer_orb_slam.html#aa271c5b799ee0ea8803d261b9227b357" title="Initializes the optimizer with the required structures and data." alt="" coords="5,5,189,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="221,21,189,21,189,16,221,16"/>
+</map>

@@ -1,0 +1,18 @@
+<map id="D:/University/C++/Source/repos/Bundle_Adjustment/include/algorithms/OptimizationAlgorithmLevenberg.h" name="D:/University/C++/Source/repos/Bundle_Adjustment/include/algorithms/OptimizationAlgorithmLevenberg.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="200,5,407,80"/>
+<area shape="rect" id="Node000002" href="$_optimization_algorithm_levenberg_8cpp.html" title=" " alt="" coords="5,128,266,187"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="238,91,180,130,177,125,235,87"/>
+<area shape="rect" id="Node000003" href="$_optimizer_factory_8cpp.html" title=" " alt="" coords="282,365,456,424"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="306,95,311,195,319,252,331,309,355,364,350,366,326,310,314,253,306,196,300,96"/>
+<area shape="rect" id="Node000004" href="$_optimizer_orb_slam_8h.html" title=" " alt="" coords="341,128,530,187"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="359,88,404,126,400,130,356,92"/>
+<area shape="rect" id="Node000005" href="$_optimizer_orb_slam_8cpp.html" title=" " alt="" coords="341,243,522,301"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="437,202,435,242,430,242,431,202"/>
+<area shape="rect" id="Node000006" href="$_optimizer_factory_8h.html" title=" " alt="" coords="546,235,720,309"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="500,192,570,232,567,236,497,197"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="539,319,433,367,431,362,537,314"/>
+<area shape="rect" id="Node000007" href="$_factory_producer_8h.html" title=" " alt="" coords="546,357,720,432"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="636,325,636,357,630,357,630,325"/>
+<area shape="rect" id="Node000008" href="$_factory_producer_8cpp.html" title=" " alt="" coords="546,480,720,539"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="636,447,636,479,630,479,630,447"/>
+</map>

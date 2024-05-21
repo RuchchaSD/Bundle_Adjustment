@@ -1,0 +1,7 @@
+<map id="SolverMarginalized::setActiveStructure" name="SolverMarginalized::setActiveStructure">
+<area shape="rect" id="Node000001" title="Sets the active structure." alt="" coords="397,5,532,48"/>
+<area shape="rect" id="Node000002" href="$class_solver_marginalized.html#a8b80e406b26e30826ef55fa5a6e31250" title="Alternative method to update the active Hessian matrix." alt="" coords="183,5,349,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="381,29,349,29,349,24,381,24"/>
+<area shape="rect" id="Node000003" href="$class_solver_marginalized.html#ac46b6f31b87c5b7049e797528a47c30b" title="Solves the system." alt="" coords="5,5,135,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="167,29,135,29,135,24,167,24"/>
+</map>

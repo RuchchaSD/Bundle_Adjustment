@@ -1,0 +1,9 @@
+<map id="SolverMarginalized" name="SolverMarginalized">
+<area shape="rect" id="Node000001" title="Solver class for handling marginalized optimization in ORB&#45;SLAM." alt="" coords="6,229,136,256"/>
+<area shape="rect" id="Node000002" href="$class_solver_orb.html" title=" " alt="" coords="32,155,110,181"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,197,74,229,68,229,68,197"/>
+<area shape="rect" id="Node000003" href="$class_solver_base.html" title=" " alt="" coords="28,80,114,107"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="74,122,74,154,68,154,68,122"/>
+<area shape="rect" id="Node000004" href="$class_base_data_structure.html" title="Base class for data structures used in SLAM optimization." alt="" coords="5,5,137,32"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="74,48,74,80,68,80,68,48"/>
+</map>

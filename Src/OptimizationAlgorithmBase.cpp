@@ -1,10 +1,10 @@
+// OptimizationAlgorithmBase.cpp
 #include "OptimizationAlgorithmBase.h"
 
-OptimizationAlgorithmBase::OptimizationAlgorithmBase()
-{
+OptimizationAlgorithmBase::OptimizationAlgorithmBase() {
+    // Constructor implementation
 }
 
-OptimizationAlgorithmBase::~OptimizationAlgorithmBase()
-{
+OptimizationAlgorithmBase::~OptimizationAlgorithmBase() {
+    // Destructor implementation
 }
- 

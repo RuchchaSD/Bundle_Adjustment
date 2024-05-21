@@ -1,0 +1,7 @@
+<map id="SolverOrb" name="SolverOrb">
+<area shape="rect" id="Node000001" title=" " alt="" coords="32,155,110,181"/>
+<area shape="rect" id="Node000002" href="$class_solver_base.html" title=" " alt="" coords="28,80,114,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,122,74,154,68,154,68,122"/>
+<area shape="rect" id="Node000003" href="$class_base_data_structure.html" title="Base class for data structures used in SLAM optimization." alt="" coords="5,5,137,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="74,48,74,80,68,80,68,48"/>
+</map>

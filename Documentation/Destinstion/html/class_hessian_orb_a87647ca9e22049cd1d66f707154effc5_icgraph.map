@@ -1,0 +1,7 @@
+<map id="HessianOrb::getAJacobianBlock" name="HessianOrb::getAJacobianBlock">
+<area shape="rect" id="Node000001" title="Retrieves the Jacobian block for matrix A." alt="" coords="430,5,605,48"/>
+<area shape="rect" id="Node000002" href="$class_hessian_orb.html#af9415be9676987cd0c00cf643c3db581" title="Updates the A matrix of the Hessian." alt="" coords="237,13,382,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="414,29,382,29,382,24,414,24"/>
+<area shape="rect" id="Node000003" href="$class_hessian_orb.html#abaca27949439a5acf3a0dccc4f028020" title="Updates the Hessian matrix based on the current Jacobians and residuals." alt="" coords="5,13,189,40"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="221,29,189,29,189,24,221,24"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="HessianOrb::updateB" name="HessianOrb::updateB">
+<area shape="rect" id="Node000001" title="Updates the B matrix of the Hessian." alt="" coords="237,5,382,32"/>
+<area shape="rect" id="Node000002" href="$class_hessian_orb.html#abaca27949439a5acf3a0dccc4f028020" title="Updates the Hessian matrix based on the current Jacobians and residuals." alt="" coords="5,5,189,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="221,21,189,21,189,16,221,16"/>
+</map>

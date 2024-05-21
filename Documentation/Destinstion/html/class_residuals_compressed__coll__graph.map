@@ -1,0 +1,7 @@
+<map id="ResidualsCompressed" name="ResidualsCompressed">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,155,157,181"/>
+<area shape="rect" id="Node000002" href="$class_residuals_base.html" title=" " alt="" coords="27,80,135,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,122,84,154,78,154,78,122"/>
+<area shape="rect" id="Node000003" href="$class_base_data_structure.html" title="Base class for data structures used in SLAM optimization." alt="" coords="15,5,147,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="84,48,84,80,78,80,78,48"/>
+</map>

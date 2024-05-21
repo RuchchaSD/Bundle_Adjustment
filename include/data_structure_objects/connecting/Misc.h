@@ -1,66 +1,74 @@
+// Misc.h
 #pragma once
-#include <Eigen/core>
-struct Propertise
-{
-	bool verticesSetted;
+#include <Eigen/Core>
 
-	int numEdges;
-	int edgeSize;
-	int totalObservations; // numEdges * edgeSize
+/**
+ * @struct Propertise
+ * @brief Structure to hold properties and settings for SLAM optimization.
+ */
+struct Propertise {
+    bool verticesSetted;
 
-	int numActiveVertices1; // active vertices are the vertices that are involved in the optimization
-	int vertex1Size; // size of the vertex1
-	int totalType1Parameters; // numActiveVertices1 * vertex1Size
-	int numFixedVertices1; // fixed vertices are the vertices that are not involved in the optimization
+    int numEdges;
+    int edgeSize;
+    int totalObservations; // numEdges * edgeSize
 
-	int numActiveVertices2; // active vertices are the vertices that are involved in the optimization
-	int vertex2Size; // size of the vertex2
-	int totalType2Parameters; // numActiveVertices2 * vertex2Size
-	int numFixedVertices2; // fixed vertices are the vertices that are not involved in the optimization
+    int numActiveVertices1; // active vertices are the vertices that are involved in the optimization
+    int vertex1Size; // size of the vertex1
+    int totalType1Parameters; // numActiveVertices1 * vertex1Size
+    int numFixedVertices1; // fixed vertices are the vertices that are not involved in the optimization
 
-	int totalWidth; // totalType1Parameters + totalType2Parameters
+    int numActiveVertices2; // active vertices are the vertices that are involved in the optimization
+    int vertex2Size; // size of the vertex2
+    int totalType2Parameters; // numActiveVertices2 * vertex2Size
+    int numFixedVertices2; // fixed vertices are the vertices that are not involved in the optimization
 
-	bool isInitialized;
-	bool DebugMode;
-	int verbosityLevel;
+    int totalWidth; // totalType1Parameters + totalType2Parameters
 
-	//Algorithm settings
-	bool isLM;
-	int maxIterations;
-	int maxRepeats;
+    bool isInitialized;
+    bool DebugMode;
+    int verbosityLevel;
 
-	//Robust kernel settings
-	double delta;
-	bool isRobust;
+    // Algorithm settings
+    bool isLM;
+    int maxIterations;
+    int maxRepeats;
 
-	bool isSparse;
+    // Robust kernel settings
+    double delta;
+    bool isRobust;
 
-	bool isMarginalized;
-	bool hasFixedVertices;
+    bool isSparse;
 
-	//std::vector<std::map<int,Eigen::VectorXd>> edgeToVertex2; //edgeToVertex2[edgeLocation][vertex2Index] = observationVec
+    bool isMarginalized;
+    bool hasFixedVertices;
 
-	Eigen::VectorXi numOberservationsPerVertex1;
-	Eigen::VectorXi numOberservationsPerVertex2;
+    Eigen::VectorXi numOberservationsPerVertex1;
+    Eigen::VectorXi numOberservationsPerVertex2;
 
-	//for solvers usage
-	double Lamda;
-	bool isRepeatAttempt;
+    // for solvers usage
+    double Lamda;
+    bool isRepeatAttempt;
 
+    /**
+     * @brief Initializes the property fields based on the current values.
+     */
+    void initialize()
+    {
+        totalObservations = numEdges * edgeSize;
+        totalType1Parameters = numActiveVertices1 * vertex1Size;
+        totalType2Parameters = numActiveVertices2 * vertex2Size;
+        totalWidth = totalType1Parameters + totalType2Parameters;
+        isInitialized = true;
+    }
 
-	void initialize()
-	{
-		totalObservations = numEdges * edgeSize; 
-		totalType1Parameters = numActiveVertices1 * vertex1Size;
-		totalType2Parameters = numActiveVertices2 * vertex2Size;
-		totalWidth = totalType1Parameters + totalType2Parameters;
-		isInitialized = true;
-	}
-
-	void setNumObservationVectors() {
-		this->numOberservationsPerVertex1.resize(this->numActiveVertices1);
-		this->numOberservationsPerVertex2.resize(this->numActiveVertices2);
-		this->numOberservationsPerVertex1.setZero();
-		this->numOberservationsPerVertex2.setZero();
-	}
+    /**
+     * @brief Sets the number of observation vectors to zero.
+     */
+    void setNumObservationVectors() {
+        this->numOberservationsPerVertex1.resize(this->numActiveVertices1);
+        this->numOberservationsPerVertex2.resize(this->numActiveVertices2);
+        this->numOberservationsPerVertex1.setZero();
+        this->numOberservationsPerVertex2.setZero();
+    }
 };

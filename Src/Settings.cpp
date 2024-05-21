@@ -1,17 +1,21 @@
+//Settings.cpp
 #include "Settings.h"
 
+/**
+ * @brief Validate the optimizer settings.
+ *
+ * This method checks the validity of the optimizer settings, ensuring that necessary
+ * configurations such as parameter updates, reprojection functions, and robust kernels are set correctly.
+ *
+ * @return True if the settings are valid, otherwise false.
+ */
 bool OptimizerSettings::validate()
 {
-    // Check for the validity of the settings here
-    //add parameter update normal one if not set
-    // user can set robustkernel only if Robust type is "custom" and robust is true
-    //user have to set the reprojection function otherwise the settings are invalid
-
     if (parameterUpdate == nullptr)
     {
-	    parameterUpdate = std::make_unique<ParameterUpdateBase>();
-	}
+        parameterUpdate = std::make_unique<ParameterUpdateBase>();
+    }
 
     this->isValid = true;
     return this->isValid;
-} 
+}

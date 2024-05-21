@@ -1,0 +1,9 @@
+<map id="HessianOrb::getAblock" name="HessianOrb::getAblock">
+<area shape="rect" id="Node000001" title="Retrieves the block for matrix A at a given vertex location." alt="" coords="475,43,630,69"/>
+<area shape="rect" id="Node000002" href="$class_hessian_orb.html#a9c708efe7065046df6c8f41924ccd201" title="Retrieves the maximum value of the diagonal of the Hessian matrix." alt="" coords="237,5,427,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="459,46,427,42,428,37,460,41"/>
+<area shape="rect" id="Node000003" href="$class_hessian_orb.html#af9415be9676987cd0c00cf643c3db581" title="Updates the A matrix of the Hessian." alt="" coords="259,72,405,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="460,71,405,78,405,73,459,66"/>
+<area shape="rect" id="Node000004" href="$class_hessian_orb.html#abaca27949439a5acf3a0dccc4f028020" title="Updates the Hessian matrix based on the current Jacobians and residuals." alt="" coords="5,72,189,99"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="244,88,189,88,189,83,244,83"/>
+</map>

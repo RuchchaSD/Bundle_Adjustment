@@ -1,0 +1,18 @@
+<map id="D:/University/C++/Source/repos/Bundle_Adjustment/include/OptimizerBase.h" name="D:/University/C++/Source/repos/Bundle_Adjustment/include/OptimizerBase.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="211,5,385,64"/>
+<area shape="rect" id="Node000002" href="$_optimizer_base_8cpp.html" title=" " alt="" coords="5,112,180,171"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="229,74,150,114,148,109,227,69"/>
+<area shape="rect" id="Node000003" href="$_optimizer_orb_slam_8h.html" title=" " alt="" coords="204,112,392,171"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="301,80,301,112,295,112,295,80"/>
+<area shape="rect" id="Node000005" href="$_optimizer_factory_8h.html" title=" " alt="" coords="343,219,517,293"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="368,71,389,89,407,111,420,137,428,165,433,218,428,219,422,166,415,139,402,113,385,93,365,75"/>
+<area shape="rect" id="Node000004" href="$_optimizer_orb_slam_8cpp.html" title=" " alt="" coords="138,227,319,285"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="275,185,248,227,244,225,270,182"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="345,179,388,216,385,220,341,183"/>
+<area shape="rect" id="Node000006" href="$_optimizer_factory_8cpp.html" title=" " alt="" coords="243,349,417,408"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="392,307,356,351,351,347,388,304"/>
+<area shape="rect" id="Node000007" href="$_factory_producer_8h.html" title=" " alt="" coords="441,341,616,416"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="472,304,501,339,496,343,467,307"/>
+<area shape="rect" id="Node000008" href="$_factory_producer_8cpp.html" title=" " alt="" coords="441,464,616,523"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="531,431,531,463,526,463,526,431"/>
+</map>

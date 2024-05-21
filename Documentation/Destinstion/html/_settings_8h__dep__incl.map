@@ -1,0 +1,13 @@
+<map id="D:/University/C++/Source/repos/Bundle_Adjustment/include/optimizer_factory/Settings.h" name="D:/University/C++/Source/repos/Bundle_Adjustment/include/optimizer_factory/Settings.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="104,5,278,80"/>
+<area shape="rect" id="Node000002" href="$_settings_8cpp.html" title=" " alt="" coords="5,136,180,195"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,94,118,137,114,134,149,90"/>
+<area shape="rect" id="Node000003" href="$_optimizer_factory_8h.html" title=" " alt="" coords="204,128,378,203"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="233,90,263,126,259,129,229,94"/>
+<area shape="rect" id="Node000004" href="$_optimizer_factory_8cpp.html" title=" " alt="" coords="104,259,278,317"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="253,217,217,260,213,257,249,213"/>
+<area shape="rect" id="Node000005" href="$_factory_producer_8h.html" title=" " alt="" coords="303,251,477,325"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="333,213,362,249,358,252,329,217"/>
+<area shape="rect" id="Node000006" href="$_factory_producer_8cpp.html" title=" " alt="" coords="303,373,477,432"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="393,341,393,373,387,373,387,341"/>
+</map>

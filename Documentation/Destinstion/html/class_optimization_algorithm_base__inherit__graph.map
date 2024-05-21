@@ -1,0 +1,7 @@
+<map id="OptimizationAlgorithmBase" name="OptimizationAlgorithmBase">
+<area shape="rect" id="Node000001" title="Base class for optimization algorithms, handling problem structures and optimization processes." alt="" coords="19,80,199,107"/>
+<area shape="rect" id="Node000003" href="$class_optimization_algorithm_levenberg.html" title="Implementation of the Levenberg&#45;Marquardt optimization algorithm." alt="" coords="5,155,213,181"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="112,122,112,154,106,154,106,122"/>
+<area shape="rect" id="Node000002" href="$class_base_data_structure.html" title="Base class for data structures used in SLAM optimization." alt="" coords="43,5,175,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,48,112,80,106,80,106,48"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="ResidualsCompressed::updateResiduals" name="ResidualsCompressed::updateResiduals">
+<area shape="rect" id="Node000001" title="Updates the residuals based on the current parameters and observations." alt="" coords="5,72,157,115"/>
+<area shape="rect" id="Node000002" href="$class_residuals_compressed.html#ab08028cc27a9613adcf4a0ae5d78b190" title="Applies the square root of the information matrix to the residuals." alt="" coords="225,5,377,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="153,69,213,50,214,56,154,74"/>
+<area shape="rect" id="Node000003" href="$class_residuals_compressed.html#a2d8b791df9390606af10aab90ada39f4" title="Applies the robust kernel to the residuals." alt="" coords="225,72,377,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="157,91,210,91,210,96,157,96"/>
+<area shape="rect" id="Node000004" href="$class_residuals_base.html#ad99798ea82cc42fec93b2c02cdf6877e" title="Sets the updated status of the residuals." alt="" coords="205,139,397,165"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="157,111,205,124,233,132,232,137,204,129,156,116"/>
+</map>

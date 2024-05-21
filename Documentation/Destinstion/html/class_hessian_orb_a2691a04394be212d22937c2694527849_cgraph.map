@@ -1,0 +1,7 @@
+<map id="HessianOrb::updateB" name="HessianOrb::updateB">
+<area shape="rect" id="Node000001" title="Updates the B matrix of the Hessian." alt="" coords="5,35,151,61"/>
+<area shape="rect" id="Node000002" href="$class_hessian_orb.html#a4683d41b8af11b8723a9bf10a45003e0" title="Retrieves the block for matrix B at a given vertex location." alt="" coords="208,5,365,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,35,192,29,193,35,152,40"/>
+<area shape="rect" id="Node000003" href="$class_hessian_orb.html#af9b7f3037f4dc10bcf9dd1cccfda7b8f" title="Retrieves the Jacobian block for matrix B." alt="" coords="199,56,374,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="152,56,183,60,183,65,151,61"/>
+</map>

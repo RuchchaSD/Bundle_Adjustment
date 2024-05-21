@@ -1,16 +1,32 @@
+// ReprojectionBase.h
 #pragma once
-#include <Eigen/core>
+#include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-class ReprojectionBase
-{
-	protected:
 
-		 
-	public:
-	ReprojectionBase();
-	~ReprojectionBase();
+/**
+ * @class ReprojectionBase
+ * @brief Base class for reprojection operations.
+ */
+class ReprojectionBase {
+protected:
 
-	virtual void reproject(const Eigen::Map<Eigen::VectorXd>& est1, const Eigen::Map<Eigen::VectorXd>& est2, Eigen::VectorXd& output) = 0;
+public:
+    /**
+     * @brief Default constructor.
+     */
+    ReprojectionBase();
+
+    /**
+     * @brief Destructor.
+     */
+    ~ReprojectionBase();
+
+    /**
+     * @brief Pure virtual function to reproject estimates.
+     * @param est1 Estimate 1.
+     * @param est2 Estimate 2.
+     * @param output Output vector for the reprojected values.
+     */
+    virtual void reproject(const Eigen::Map<Eigen::VectorXd>& est1, const Eigen::Map<Eigen::VectorXd>& est2, Eigen::VectorXd& output) = 0;
 };
-

@@ -1,0 +1,5 @@
+<map id="ResidualsBase::setIsUpdated" name="ResidualsBase::setIsUpdated">
+<area shape="rect" id="Node000001" title="Sets the updated status of the residuals." alt="" coords="205,13,397,40"/>
+<area shape="rect" id="Node000002" href="$class_residuals_compressed.html#a272f56de0ff21d1ea0a5a6697d3a6fd7" title="Updates the residuals based on the current parameters and observations." alt="" coords="5,5,157,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,29,157,29,157,24,189,24"/>
+</map>

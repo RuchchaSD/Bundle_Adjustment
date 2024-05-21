@@ -1,0 +1,5 @@
+<map id="ParameterVectorBase" name="ParameterVectorBase">
+<area shape="rect" id="Node000001" title="Base class for handling Parameters." alt="" coords="5,80,155,107"/>
+<area shape="rect" id="Node000002" href="$class_base_data_structure.html" title="Base class for data structures used in SLAM optimization." alt="" coords="14,5,146,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="83,48,83,80,77,80,77,48"/>
+</map>

@@ -79,18 +79,18 @@ void InformationMatrixCompressed::printInformationMatrix()
 
 
 
-//parameterVectorBase
-parameterVectorBase::parameterVectorBase() : parameterUpdate(nullptr), BaseDataStructure()
+//ParameterVectorBase
+ParameterVectorBase::ParameterVectorBase() : parameterUpdate(nullptr), BaseDataStructure()
 {
 	this->maxCoeffValue = 0.0;
 	this->isBackedUp = false;
 }
-parameterVectorBase::~parameterVectorBase()
+ParameterVectorBase::~ParameterVectorBase()
 {
 }
 
 //parameterVectorMarginalized
-parameterVectorMarginalized::parameterVectorMarginalized() : parameterVectorBase()
+parameterVectorMarginalized::parameterVectorMarginalized() : ParameterVectorBase()
 {
 	this->activeParameterVector = std::make_shared<Eigen::VectorXd>();
 	this->marginalizedParameterVector = std::make_shared<Eigen::VectorXd>();
@@ -499,29 +499,29 @@ void JacobianCompressed::insertParameterPair(int edgeLocation, std::pair<std::sh
 
 
 
-//residualsBase
-residualsBase::residualsBase() :kernel(nullptr),informationMatrix(nullptr), BaseDataStructure()
+//ResidualsBase
+ResidualsBase::ResidualsBase() :kernel(nullptr),informationMatrix(nullptr), BaseDataStructure()
 {
 	this->isUpdated = false;
 }
-residualsBase::~residualsBase()
+ResidualsBase::~ResidualsBase()
 {
 }
 
-std::shared_ptr<InformationMatrixOrb> residualsBase::getInformationVector()
+std::shared_ptr<InformationMatrixOrb> ResidualsBase::getInformationVector()
 {
 	return informationMatrix;
 }
 
-//residualsCompressed
-residualsCompressed::residualsCompressed() : residualsBase()
+//ResidualsCompressed
+ResidualsCompressed::ResidualsCompressed() : ResidualsBase()
 {
 	this->residuals = nullptr;
 }
-residualsCompressed::~residualsCompressed()
+ResidualsCompressed::~ResidualsCompressed()
 {
 }
-void residualsCompressed::initialize()
+void ResidualsCompressed::initialize()
 {
 	
 #ifndef NDEBUG
@@ -563,7 +563,7 @@ void residualsCompressed::initialize()
 
 	this->isInitialized = true;
 }
-void residualsCompressed::finalize()
+void ResidualsCompressed::finalize()
 {
 	if (isInitialized) {
 		residuals.reset();
@@ -581,7 +581,7 @@ void residualsCompressed::finalize()
 		this->isInitialized = false;
 	}
 }
-void residualsCompressed::applyRobustKernel()
+void ResidualsCompressed::applyRobustKernel()
 {
 	
 #ifndef NDEBUG
@@ -590,18 +590,18 @@ void residualsCompressed::applyRobustKernel()
 	kernel->robustifyResiduals(*residuals);
 	kernel->setUpdated(true);
 }
-void residualsCompressed::applyInformationSqrt()
+void ResidualsCompressed::applyInformationSqrt()
 {
 #ifndef NDEBUG
 	assert(isInitialized);
 #endif // !NDEBUG
 	*this->residuals = (this->residuals->array()* this->informationMatrix->getInfVecSqrt()->array());
 }
-std::shared_ptr<Eigen::Map<Eigen::VectorXd>> residualsCompressed::getResiduals(int edgeLocation)
+std::shared_ptr<Eigen::Map<Eigen::VectorXd>> ResidualsCompressed::getResiduals(int edgeLocation)
 {
 	return std::make_shared<Eigen::Map<Eigen::VectorXd>>(this->residuals->data() + edgeLocation * p->edgeSize, p->edgeSize);
 }
-void residualsCompressed::insertParameterPair(int edgeLocation, std::pair<std::shared_ptr<Eigen::Map<Eigen::VectorXd>>, std::shared_ptr<Eigen::Map<Eigen::VectorXd>>>& paramSet)
+void ResidualsCompressed::insertParameterPair(int edgeLocation, std::pair<std::shared_ptr<Eigen::Map<Eigen::VectorXd>>, std::shared_ptr<Eigen::Map<Eigen::VectorXd>>>& paramSet)
 {
 #ifndef NDEBUG
 	assert(isInitialized);
@@ -609,7 +609,7 @@ void residualsCompressed::insertParameterPair(int edgeLocation, std::pair<std::s
 	//assert(paramSet.first.size() == p->vertex1Size && paramSet.second.size() == p->vertex2Size);
 	parameterSets->at(edgeLocation) = paramSet;
 }
-void residualsCompressed::updateResiduals()
+void ResidualsCompressed::updateResiduals()
 {
 #ifndef NDEBUG
 	assert(isInitialized);
@@ -645,12 +645,12 @@ void residualsCompressed::updateResiduals()
 	setIsUpdated(true);
 }
 
-double residualsCompressed::norm()
+double ResidualsCompressed::norm()
 {
 	return residuals->norm();
 }
 
-double residualsCompressed::getMaxCoeff()
+double ResidualsCompressed::getMaxCoeff()
 {
 	return residuals->cwiseAbs().maxCoeff();
 }

@@ -12,6 +12,7 @@ _deps
 .vs
 Thirdparty/include/g2o
 Thirdparty/lib
+Documentation/Working/Doxyfile
 Other/g2o_examples
 out/build
 CMakePresets.json
