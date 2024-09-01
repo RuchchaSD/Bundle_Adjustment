@@ -57,7 +57,7 @@ add_include_directories_recursively(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/Thirdparty)
 
 # Recursively find all .cpp source files in the "src" directory and store them in the SOURCES variable.
-file(GLOB_RECURSE SOURCES "Src/*.cpp")
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 # Create a library named "Custom_BundleAdjustment" using the source files stored in SOURCES.
 add_library(Custom_BundleAdjustment ${SOURCES})
