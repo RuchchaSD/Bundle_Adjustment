@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Misc.h"
 #include "Timer.h"
+#include <memory>
 
 /**
  * @class BaseDataStructure

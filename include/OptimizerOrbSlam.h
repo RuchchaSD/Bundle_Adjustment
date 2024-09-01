@@ -2,7 +2,7 @@
 #pragma once
 #include "OptimizerBase.h"
 #include <Eigen/Dense>
-#include <Eigen/core>
+#include <Eigen/Core>
 #include "ORBData.h"
 #include "OptimizationAlgorithmGN.h"
 #include "OptimizationAlgorithmLevenberg.h"

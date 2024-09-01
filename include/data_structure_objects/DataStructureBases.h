@@ -10,6 +10,7 @@
 #include <iostream>
 #include "Timer.h"
 
+
 	/**
 	 * @class InformationMatrixBase
 	 * @brief Base class for handling information matrices in SLAM.

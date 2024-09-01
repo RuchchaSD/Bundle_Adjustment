@@ -1,6 +1,7 @@
 // Misc.h
 #pragma once
 #include <Eigen/Core>
+#include <memory>
 
 /**
  * @struct Propertise

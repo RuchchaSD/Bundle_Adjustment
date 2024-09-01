@@ -1,6 +1,6 @@
 // ProblemStructure.h
 #pragma once
-#include <Eigen/core>
+#include <Eigen/Core>
 #include <Eigen/Dense>
 #include "DataStructureBases.h"
 
