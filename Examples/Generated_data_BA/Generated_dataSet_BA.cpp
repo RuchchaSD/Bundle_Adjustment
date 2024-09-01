@@ -234,9 +234,9 @@ Generated_dataSet_BA::~Generated_dataSet_BA()
  */
 void Generated_dataSet_BA::do_BA()
 {
-    std::string poseFile = "D:/University/C++/Source/repos/temp/Other/data/poses.csv";
-    std::string landmarkFile = "D:/University/C++/Source/repos/temp/Other/data/landmarks.csv";
-    std::string projectionsFile = "D:/University/C++/Source/repos/temp/Other/data/projection.csv";
+    std::string poseFile = "/media/ruchchasd/New Volume1/work/Ubuntu_Work/Bundle_Adjustment/Bundle_Adjustment/Examples/Generated_data_BA/data/poses.csv";
+    std::string landmarkFile = "/media/ruchchasd/New Volume1/work/Ubuntu_Work/Bundle_Adjustment/Bundle_Adjustment/Examples/Generated_data_BA/data/landmarks.csv";
+    std::string projectionsFile = "/media/ruchchasd/New Volume1/work/Ubuntu_Work/Bundle_Adjustment/Bundle_Adjustment/Examples/Generated_data_BA/data/projection.csv";
 
     std::string answer = askQuestion("Data in installation directory? (y/n)");
 
